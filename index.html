@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Finance, Loans & Udhar Manager</title>
+    <title>Smart Finance, Loans, Investments & Udhar Manager</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -11,7 +11,7 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 pb-20 select-none">
+<body class="bg-gray-100 min-h-screen text-gray-800 pb-24 select-none">
 
     <!-- AUTH SCREEN -->
     <div id="auth-container" class="max-w-md mx-auto p-4 pt-10 min-h-screen flex flex-col justify-center">
@@ -20,7 +20,7 @@
                 <i class="fa-solid fa-wallet"></i>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">FinanceManager Pro</h1>
-            <p class="text-xs text-gray-500">Budget, Credit Cards, Loans & Udhar Tracker</p>
+            <p class="text-xs text-gray-500">Budget, Investments, Cards, Loans & Udhar</p>
         </div>
 
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
@@ -131,12 +131,10 @@
                             </div>
                         </div>
 
-                        <!-- Dynamic Link Selector (Shows when EMI, Card, or Udhar is selected) -->
+                        <!-- Dynamic Link Selector -->
                         <div id="linked-account-box" class="hidden">
                             <label class="text-[11px] font-bold text-indigo-600">Select Specific Loan / Card / Udhar to Credit</label>
-                            <select id="tx-linked-id" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900">
-                                <!-- Dynamically filled -->
-                            </select>
+                            <select id="tx-linked-id" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900"></select>
                         </div>
 
                         <div>
@@ -159,7 +157,32 @@
                 </div>
             </div>
 
-            <!-- TAB 2: BANK LOANS & EMIs -->
+            <!-- TAB 2: INVESTMENTS (SIP, LIC, STOCKS) -->
+            <div id="view-investments" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-gray-800">My Investments Portfolio</h3>
+                    <button onclick="toggleInvestModal(true)" class="px-3 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Add Investment
+                    </button>
+                </div>
+
+                <!-- Portfolio Summary Cards -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl">
+                        <p class="text-[11px] text-emerald-700 font-semibold">Total Invested</p>
+                        <p class="text-lg font-bold text-emerald-900" id="total-invested-amt">₹0</p>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-2xl">
+                        <p class="text-[11px] text-indigo-700 font-semibold">Portfolio Value</p>
+                        <p class="text-lg font-bold text-indigo-900" id="total-portfolio-val">₹0</p>
+                    </div>
+                </div>
+
+                <!-- Investments List -->
+                <div id="investments-container" class="space-y-3"></div>
+            </div>
+
+            <!-- TAB 3: BANK LOANS & EMIs -->
             <div id="view-loans" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">Bank Loans & EMIs</h3>
@@ -176,7 +199,7 @@
                 <div id="loans-container" class="space-y-3"></div>
             </div>
 
-            <!-- TAB 3: CREDIT CARDS -->
+            <!-- TAB 4: CREDIT CARDS -->
             <div id="view-cards" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">My Credit Cards</h3>
@@ -187,7 +210,7 @@
                 <div id="cards-container" class="space-y-3"></div>
             </div>
 
-            <!-- TAB 4: UDHAR & LOANS -->
+            <!-- TAB 5: UDHAR & LOANS -->
             <div id="view-udhar" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">Friends & Relatives Udhar</h3>
@@ -210,7 +233,7 @@
                 <div id="udhar-list" class="space-y-2"></div>
             </div>
 
-            <!-- TAB 5: REPORTS -->
+            <!-- TAB 6: REPORTS -->
             <div id="view-reports" class="space-y-4 hidden">
                 <h3 class="text-sm font-bold text-gray-800">Financial Insights</h3>
 
@@ -228,29 +251,68 @@
             </div>
         </main>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Navigation Bar -->
         <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around py-2 z-30 shadow-lg">
-            <button onclick="switchAppTab('transactions')" id="nav-tx" class="flex flex-col items-center text-indigo-600 text-[11px] font-medium">
-                <i class="fa-solid fa-house text-base mb-0.5"></i>
+            <button onclick="switchAppTab('transactions')" id="nav-tx" class="flex flex-col items-center text-indigo-600 text-[10px] font-medium">
+                <i class="fa-solid fa-house text-sm mb-0.5"></i>
                 <span>Home</span>
             </button>
-            <button onclick="switchAppTab('loans')" id="nav-loans" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium">
-                <i class="fa-solid fa-landmark text-base mb-0.5"></i>
+            <button onclick="switchAppTab('investments')" id="nav-investments" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[10px] font-medium">
+                <i class="fa-solid fa-chart-line text-sm mb-0.5"></i>
+                <span>Invest</span>
+            </button>
+            <button onclick="switchAppTab('loans')" id="nav-loans" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[10px] font-medium">
+                <i class="fa-solid fa-landmark text-sm mb-0.5"></i>
                 <span>Loans</span>
             </button>
-            <button onclick="switchAppTab('cards')" id="nav-cards" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium">
-                <i class="fa-solid fa-credit-card text-base mb-0.5"></i>
+            <button onclick="switchAppTab('cards')" id="nav-cards" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[10px] font-medium">
+                <i class="fa-solid fa-credit-card text-sm mb-0.5"></i>
                 <span>Cards</span>
             </button>
-            <button onclick="switchAppTab('udhar')" id="nav-udhar" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium">
-                <i class="fa-solid fa-hand-holding-dollar text-base mb-0.5"></i>
+            <button onclick="switchAppTab('udhar')" id="nav-udhar" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[10px] font-medium">
+                <i class="fa-solid fa-hand-holding-dollar text-sm mb-0.5"></i>
                 <span>Udhar</span>
             </button>
-            <button onclick="switchAppTab('reports')" id="nav-reports" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
-                <i class="fa-solid fa-chart-pie text-base mb-0.5"></i>
+            <button onclick="switchAppTab('reports')" id="nav-reports" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[10px] font-medium">
+                <i class="fa-solid fa-chart-pie text-sm mb-0.5"></i>
                 <span>Reports</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL: ADD INVESTMENT (SIP, LIC, STOCKS) -->
+    <div id="invest-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-800">Add Investment</h3>
+                <button onclick="toggleInvestModal(false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveInvestment(event)" class="space-y-3">
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Investment Type</label>
+                    <select id="inv-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                        <option value="sip">📈 Mutual Fund / SIP</option>
+                        <option value="lic">🛡️ LIC / Insurance Policy</option>
+                        <option value="stock">📊 Share Market / Stocks</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Name / Title</label>
+                    <input type="text" id="inv-name" placeholder="e.g., Nippon India Small Cap / Tata Motors" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500">Invested Amount (₹)</label>
+                        <input type="number" id="inv-invested" placeholder="25000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500">Current Value (₹)</label>
+                        <input type="number" id="inv-current" placeholder="32000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Investment</button>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL: PAY EMI SOURCE SELECTOR -->
@@ -271,15 +333,13 @@
                     <label class="text-[11px] font-semibold text-gray-500">Deduct Payment From</label>
                     <select id="emi-payment-source" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
                         <option value="salary">💵 Salary / Cash / Bank Balance</option>
-                        <option value="card">💳 Credit Card (Increase Card Used Balance)</option>
+                        <option value="card">💳 Credit Card</option>
                         <option value="udhar">🤝 Taken Udhar from Relative / Friend</option>
                     </select>
                 </div>
                 <div id="source-detail-box" class="hidden">
                     <label class="text-[11px] font-bold text-purple-600" id="source-detail-label">Select Specific Account</label>
-                    <select id="emi-source-id" class="w-full mt-1 p-2.5 bg-purple-50 border border-purple-200 rounded-xl text-xs font-semibold text-purple-900">
-                        <!-- Dynamic Options -->
-                    </select>
+                    <select id="emi-source-id" class="w-full mt-1 p-2.5 bg-purple-50 border border-purple-200 rounded-xl text-xs font-semibold text-purple-900"></select>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Confirm EMI Payment</button>
             </form>
@@ -296,7 +356,7 @@
             <form onsubmit="saveLoan(event)" class="space-y-3">
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Loan Title / Provider</label>
-                    <input type="text" id="loan-name" placeholder="e.g., Car Loan, SBI Personal Loan" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    <input type="text" id="loan-name" placeholder="e.g., Car Loan" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Total Loan Amount (₹)</label>
@@ -385,7 +445,7 @@
     <!-- JAVASCRIPT -->
     <script>
         let currentUser = null;
-        let userData = { transactions: [], loans: [], cards: [], udhar: [] };
+        let userData = { transactions: [], investments: [], loans: [], cards: [], udhar: [] };
         let catChart = null;
         let incExpChart = null;
 
@@ -460,6 +520,11 @@
                         { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, date: '25 Oct' },
                         { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, date: '26 Oct' }
                     ],
+                    investments: [
+                        { id: 401, type: 'sip', name: 'Nippon Small Cap Fund', invested: 30000, current: 38500 },
+                        { id: 402, type: 'lic', name: 'LIC Jeevan Labh', invested: 45000, current: 45000 },
+                        { id: 403, type: 'stock', name: 'Tata Motors', invested: 20000, current: 24200 }
+                    ],
                     loans: [
                         { id: 301, name: 'HDFC Car Loan', total: 400000, remaining: 250000, emi: 9500 }
                     ],
@@ -486,8 +551,9 @@
         function loadUserData() {
             if (!currentUser) return;
             let raw = localStorage.getItem('user_data_' + currentUser.email);
-            userData = raw ? JSON.parse(raw) : { transactions: [], loans: [], cards: [], udhar: [] };
+            userData = raw ? JSON.parse(raw) : { transactions: [], investments: [], loans: [], cards: [], udhar: [] };
             if (!userData.transactions) userData.transactions = [];
+            if (!userData.investments) userData.investments = [];
             if (!userData.loans) userData.loans = [];
             if (!userData.cards) userData.cards = [];
             if (!userData.udhar) userData.udhar = [];
@@ -510,17 +576,17 @@
         }
 
         function switchAppTab(tabName) {
-            ['transactions', 'loans', 'cards', 'udhar', 'reports'].forEach(t => {
+            ['transactions', 'investments', 'loans', 'cards', 'udhar', 'reports'].forEach(t => {
                 let view = document.getElementById('view-' + t);
                 let nav = document.getElementById('nav-' + t);
                 if (view) view.classList.add('hidden');
-                if (nav) nav.className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium';
+                if (nav) nav.className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[10px] font-medium';
             });
 
             let activeView = document.getElementById('view-' + tabName);
             let activeNav = document.getElementById('nav-' + tabName);
             if (activeView) activeView.classList.remove('hidden');
-            if (activeNav) activeNav.className = 'flex flex-col items-center text-indigo-600 text-[11px] font-medium';
+            if (activeNav) activeNav.className = 'flex flex-col items-center text-indigo-600 text-[10px] font-medium';
 
             renderAllViews();
             if (tabName === 'reports') renderReports();
@@ -528,6 +594,7 @@
 
         function renderAllViews() {
             renderTransactions();
+            renderInvestments();
             renderLoans();
             renderCards();
             renderUdhar();
@@ -577,7 +644,6 @@
             const amount = parseFloat(document.getElementById('tx-amount').value);
             const linkedVal = document.getElementById('tx-linked-id').value;
 
-            // Auto-credit linked account if selected
             if (type === 'expense' && linkedVal && !document.getElementById('linked-account-box').classList.contains('hidden')) {
                 const [targetType, idStr] = linkedVal.split('_');
                 const targetId = parseInt(idStr);
@@ -653,6 +719,71 @@
             document.getElementById('dash-liabilities').innerText = '₹' + totalLiabilities.toLocaleString('en-IN');
         }
 
+        // INVESTMENTS LOGIC (SIP, LIC, STOCKS)
+        function toggleInvestModal(show) { document.getElementById('invest-modal').classList.toggle('hidden', !show); }
+        function saveInvestment(e) {
+            e.preventDefault();
+            userData.investments.push({
+                id: Date.now(),
+                type: document.getElementById('inv-type').value,
+                name: document.getElementById('inv-name').value,
+                invested: parseFloat(document.getElementById('inv-invested').value),
+                current: parseFloat(document.getElementById('inv-current').value)
+            });
+            saveUserData();
+            toggleInvestModal(false);
+            e.target.reset();
+        }
+        function deleteInvestment(id) { userData.investments = userData.investments.filter(i => i.id !== id); saveUserData(); }
+
+        function renderInvestments() {
+            const container = document.getElementById('investments-container');
+            container.innerHTML = '';
+            let totalInv = 0, totalCur = 0;
+
+            if (!userData.investments.length) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No investments added yet.</p>';
+            }
+
+            userData.investments.forEach(i => {
+                totalInv += i.invested;
+                totalCur += i.current;
+                let profitLoss = i.current - i.invested;
+                let plPercent = i.invested > 0 ? ((profitLoss / i.invested) * 100).toFixed(1) : 0;
+                let badgeText = i.type === 'sip' ? '📈 SIP / MF' : (i.type === 'lic' ? '🛡️ LIC / Insurance' : '📊 Stocks');
+
+                const el = document.createElement('div');
+                el.className = 'bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2';
+                el.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-[9px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold uppercase">${badgeText}</span>
+                            <h4 class="text-xs font-bold text-gray-800 mt-1">${i.name}</h4>
+                        </div>
+                        <button onclick="deleteInvestment(${i.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-xs pt-1">
+                        <div>
+                            <span class="text-[10px] text-gray-400">Invested</span>
+                            <p class="font-bold text-gray-800">₹${i.invested.toLocaleString('en-IN')}</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400">Current</span>
+                            <p class="font-bold text-indigo-700">₹${i.current.toLocaleString('en-IN')}</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400">Returns</span>
+                            <p class="font-bold ${profitLoss >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${profitLoss >= 0 ? '+' : ''}₹${profitLoss.toLocaleString('en-IN')} (${plPercent}%)</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+
+            document.getElementById('total-invested-amt').innerText = '₹' + totalInv.toLocaleString('en-IN');
+            document.getElementById('total-portfolio-val').innerText = '₹' + totalCur.toLocaleString('en-IN');
+        }
+
         // BANK LOANS LOGIC & EMI PAYMENT MODAL
         function toggleLoanModal(show) { document.getElementById('loan-modal').classList.toggle('hidden', !show); }
         function toggleEmiPayModal(show) { document.getElementById('emi-pay-modal').classList.toggle('hidden', !show); }
@@ -702,10 +833,8 @@
             let loan = userData.loans.find(l => l.id === loanId);
             if (!loan) return;
 
-            // Reduce loan remaining balance
             loan.remaining = Math.max(0, loan.remaining - amount);
 
-            // Deduct or adjust from selected source
             if (source === 'salary') {
                 userData.transactions.unshift({
                     id: Date.now(),
