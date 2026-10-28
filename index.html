@@ -3,36 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Budget, Credit Card & Udhar Manager</title>
+    <title>Smart Finance & Udhar Manager</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for Reports -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 pb-20 select-none">
 
-    <!-- AUTHENTICATION CONTAINER -->
+    <!-- AUTH SCREEN -->
     <div id="auth-container" class="max-w-md mx-auto p-4 pt-10 min-h-screen flex flex-col justify-center">
-        <!-- Brand Header -->
-        <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-white text-3xl shadow-lg shadow-indigo-200 mb-3">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-white text-3xl shadow-lg mb-2">
                 <i class="fa-solid fa-wallet"></i>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">FinanceManager Pro</h1>
-            <p class="text-xs text-gray-500 mt-1">Manage Budget, Credit Cards, Loans & Udhar</p>
+            <p class="text-xs text-gray-500">Budget, Credit Cards & Udhar Tracker</p>
         </div>
 
-        <!-- Auth Card -->
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
-            <!-- Tabs -->
             <div class="flex border-b border-gray-100 mb-6">
-                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition">Sign In</button>
-                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition">Sign Up</button>
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600">Sign In</button>
+                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400">Sign Up</button>
             </div>
 
-            <!-- Login Form -->
             <form id="login-form" onsubmit="handleAuth(event, 'login')" class="space-y-4">
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Email Address</label>
@@ -42,41 +38,34 @@
                     <label class="text-xs font-semibold text-gray-600">Password</label>
                     <input type="password" id="login-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md transition">Sign In</button>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md">Sign In</button>
                 
-                <div class="relative flex py-2 items-center">
-                    <div class="flex-grow border-t border-gray-200"></div>
-                    <span class="flex-shrink mx-4 text-xs text-gray-400">or</span>
-                    <div class="flex-grow border-t border-gray-200"></div>
-                </div>
-
-                <button type="button" onclick="quickDemoLogin()" class="w-full py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold rounded-xl text-xs border border-emerald-200 transition flex items-center justify-center gap-2">
+                <button type="button" onclick="quickDemoLogin()" class="w-full py-3 bg-emerald-50 text-emerald-700 font-semibold rounded-xl text-xs border border-emerald-200 mt-2 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-bolt"></i> Quick Demo Login
                 </button>
             </form>
 
-            <!-- Signup Form -->
             <form id="signup-form" onsubmit="handleAuth(event, 'signup')" class="space-y-4 hidden">
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Full Name</label>
-                    <input type="text" id="signup-name" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Rahul Sharma">
+                    <input type="text" id="signup-name" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none" placeholder="Rahul Sharma">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Email Address</label>
-                    <input type="email" id="signup-email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="you@example.com">
+                    <input type="email" id="signup-email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none" placeholder="you@example.com">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Password</label>
-                    <input type="password" id="signup-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                    <input type="password" id="signup-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md transition">Create Account</button>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 text-white font-semibold rounded-xl text-sm shadow-md">Create Account</button>
             </form>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD APP CONTAINER -->
+    <!-- MAIN APP SCREEN -->
     <div id="app-container" class="max-w-md mx-auto hidden min-h-screen flex flex-col">
-        <!-- Top App Bar -->
+        <!-- Header -->
         <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-30 flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-3">
                 <div id="user-avatar" class="w-10 h-10 bg-indigo-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow">RS</div>
@@ -85,40 +74,38 @@
                     <span class="text-[11px] text-gray-500">Personal Dashboard</span>
                 </div>
             </div>
-            <button onclick="logout()" class="w-9 h-9 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-sm hover:bg-rose-100 transition" title="Logout">
+            <button onclick="logout()" class="w-9 h-9 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-sm" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
             </button>
         </header>
 
-        <!-- Dynamic Content Body -->
-        <main class="flex-1 p-4 space-y-5 overflow-y-auto">
+        <!-- Main Body -->
+        <main class="flex-1 p-4 space-y-4 overflow-y-auto">
 
-            <!-- TAB 1: TRANSACTIONS & OVERVIEW -->
+            <!-- TAB 1: HOME TRANSACTIONS -->
             <div id="view-transactions" class="space-y-4">
-                <!-- Balance Cards -->
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl text-white shadow-md">
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl text-white shadow">
                         <p class="text-xs opacity-80">Total Income</p>
                         <p class="text-xl font-bold mt-1" id="dash-income">₹0</p>
                     </div>
-                    <div class="bg-gradient-to-br from-rose-500 to-pink-600 p-4 rounded-2xl text-white shadow-md">
+                    <div class="bg-gradient-to-br from-rose-500 to-pink-600 p-4 rounded-2xl text-white shadow">
                         <p class="text-xs opacity-80">Total Expense</p>
                         <p class="text-xl font-bold mt-1" id="dash-expense">₹0</p>
                     </div>
-                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl text-white shadow-md">
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl text-white shadow">
                         <p class="text-xs opacity-80">Net Balance</p>
                         <p class="text-xl font-bold mt-1" id="dash-balance">₹0</p>
                     </div>
-                    <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-2xl text-white shadow-md">
-                        <p class="text-xs opacity-80">Net Udhar & Cards</p>
+                    <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-2xl text-white shadow">
+                        <p class="text-xs opacity-80">Cards & Udhar</p>
                         <p class="text-xl font-bold mt-1" id="dash-liabilities">₹0</p>
                     </div>
                 </div>
 
-                <!-- Add Quick Entry Form -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add New Transaction
+                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add Transaction
                     </h3>
                     <form onsubmit="addTransaction(event)" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
@@ -132,7 +119,7 @@
                             <div>
                                 <label class="text-[11px] font-semibold text-gray-500">Category</label>
                                 <select id="tx-category" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                                    <option value="Salary">Salary / Business</option>
+                                    <option value="Salary">Salary / Income</option>
                                     <option value="Food">Food & Dining</option>
                                     <option value="Shopping">Shopping & Grocery</option>
                                     <option value="Bills">Bills & Utilities</option>
@@ -142,30 +129,26 @@
                             </div>
                         </div>
                         <div>
-                            <label class="text-[11px] font-semibold text-gray-500">Title / Description</label>
-                            <input type="text" id="tx-title" placeholder="e.g., Grocery Shopping, Salary" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                            <label class="text-[11px] font-semibold text-gray-500">Title</label>
+                            <input type="text" id="tx-title" placeholder="e.g., Grocery Shopping" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500">Amount (₹)</label>
                             <input type="number" id="tx-amount" min="1" step="any" placeholder="0.00" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
-                        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow transition">Save Transaction</button>
+                        <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Transaction</button>
                     </form>
                 </div>
 
-                <!-- History Section -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Transaction History</h3>
-                        <span class="text-[10px] text-gray-400" id="tx-count">0 items</span>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent Transactions</h3>
                     </div>
-                    <div id="tx-list" class="space-y-2 max-h-72 overflow-y-auto divide-y divide-gray-50">
-                        <!-- Dynamic list -->
-                    </div>
+                    <div id="tx-list" class="space-y-2 max-h-72 overflow-y-auto divide-y divide-gray-50"></div>
                 </div>
             </div>
 
-            <!-- TAB 2: CREDIT CARDS MANAGER -->
+            <!-- TAB 2: CREDIT CARDS -->
             <div id="view-cards" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">My Credit Cards</h3>
@@ -173,53 +156,43 @@
                         <i class="fa-solid fa-plus"></i> Add Card
                     </button>
                 </div>
-
-                <!-- Cards List Container -->
-                <div id="cards-container" class="space-y-3">
-                    <!-- Dynamic Credit Cards rendered here -->
-                </div>
+                <div id="cards-container" class="space-y-3"></div>
             </div>
 
-            <!-- TAB 3: UDHAR & INFORMAL LOANS -->
+            <!-- TAB 3: UDHAR & LOANS -->
             <div id="view-udhar" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-gray-800">Udhar / Personal Loans</h3>
+                    <h3 class="text-sm font-bold text-gray-800">Udhar Tracker</h3>
                     <button onclick="toggleUdharModal(true)" class="px-3 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow flex items-center gap-1">
                         <i class="fa-solid fa-plus"></i> Add Udhar
                     </button>
                 </div>
 
-                <!-- Udhar Summary Header -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl">
-                        <p class="text-[11px] text-amber-700 font-semibold">Given (Lena Hai)</p>
+                        <p class="text-[11px] text-amber-700 font-semibold">Given (Lena hai)</p>
                         <p class="text-lg font-bold text-amber-800" id="total-udhar-given">₹0</p>
                     </div>
                     <div class="bg-purple-50 border border-purple-200 p-3 rounded-2xl">
-                        <p class="text-[11px] text-purple-700 font-semibold">Taken (Dena Hai)</p>
+                        <p class="text-[11px] text-purple-700 font-semibold">Taken (Dena hai)</p>
                         <p class="text-lg font-bold text-purple-800" id="total-udhar-taken">₹0</p>
                     </div>
                 </div>
 
-                <!-- Udhar List -->
-                <div id="udhar-list" class="space-y-2">
-                    <!-- Dynamic Udhar entries -->
-                </div>
+                <div id="udhar-list" class="space-y-2"></div>
             </div>
 
-            <!-- TAB 4: VISUAL REPORTS -->
+            <!-- TAB 4: REPORTS -->
             <div id="view-reports" class="space-y-4 hidden">
-                <h3 class="text-sm font-bold text-gray-800">Financial Reports & Insights</h3>
+                <h3 class="text-sm font-bold text-gray-800">Financial Insights</h3>
 
-                <!-- Doughnut Chart: Expenses by Category -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Expense Breakdown</h4>
-                    <div class="w-full max-w-[240px] mx-auto">
+                    <div class="w-full max-w-[220px] mx-auto">
                         <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Bar Chart: Income vs Expense -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Income vs Expense</h4>
                     <canvas id="incomeExpenseChart"></canvas>
@@ -227,7 +200,7 @@
             </div>
         </main>
 
-        <!-- Bottom Navigation Bar -->
+        <!-- Bottom Navigation -->
         <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around py-2 z-30 shadow-lg">
             <button onclick="switchAppTab('transactions')" id="nav-tx" class="flex flex-col items-center text-indigo-600 text-xs font-medium">
                 <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
@@ -248,112 +221,104 @@
         </nav>
     </div>
 
-    <!-- MODAL: ADD CREDIT CARD -->
+    <!-- MODAL: CREDIT CARD -->
     <div id="card-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center">
                 <h3 class="text-sm font-bold text-gray-800">Add Credit Card</h3>
-                <button onclick="toggleCardModal(false)" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="toggleCardModal(false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="saveCreditCard(event)" class="space-y-3">
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Card Name / Bank</label>
-                    <input type="text" id="card-name" placeholder="e.g., HDFC Regalia, SBI SimplyClick" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    <input type="text" id="card-name" placeholder="e.g., HDFC Bank" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Total Credit Limit (₹)</label>
                     <input type="number" id="card-limit" placeholder="100000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
-                    <label class="text-[11px] font-semibold text-gray-500">Current Outstanding Balance (₹)</label>
+                    <label class="text-[11px] font-semibold text-gray-500">Used Balance (₹)</label>
                     <input type="number" id="card-used" placeholder="0" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="text-[11px] font-semibold text-gray-500">Statement Date (Day)</label>
+                        <label class="text-[11px] font-semibold text-gray-500">Stmt Day</label>
                         <input type="number" id="card-stmt-day" min="1" max="31" placeholder="15" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                     </div>
                     <div>
-                        <label class="text-[11px] font-semibold text-gray-500">Due Date (Day)</label>
+                        <label class="text-[11px] font-semibold text-gray-500">Due Day</label>
                         <input type="number" id="card-due-day" min="1" max="31" placeholder="5" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                     </div>
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow mt-2">Save Credit Card</button>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Card</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: ADD UDHAR ENTRY -->
+    <!-- MODAL: UDHAR -->
     <div id="udhar-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center">
-                <h3 class="text-sm font-bold text-gray-800">Add Udhar / Loan</h3>
-                <button onclick="toggleUdharModal(false)" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="text-sm font-bold text-gray-800">Add Udhar Record</h3>
+                <button onclick="toggleUdharModal(false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="saveUdharEntry(event)" class="space-y-3">
                 <div>
-                    <label class="text-[11px] font-semibold text-gray-500">Transaction Type</label>
+                    <label class="text-[11px] font-semibold text-gray-500">Type</label>
                     <select id="udhar-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                        <option value="given">🤝 Given (Maine Diya hai - Lena baki hai)</option>
-                        <option value="taken">🏦 Taken (Maine Liya hai - Dena baki hai)</option>
+                        <option value="given">🤝 Given (Lena baki hai)</option>
+                        <option value="taken">🏦 Taken (Dena baki hai)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="text-[11px] font-semibold text-gray-500">Person / Friend Name</label>
-                    <input type="text" id="udhar-person" placeholder="e.g., Amit Kumar" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    <label class="text-[11px] font-semibold text-gray-500">Person Name</label>
+                    <input type="text" id="udhar-person" placeholder="e.g., Amit" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Amount (₹)</label>
                     <input type="number" id="udhar-amount" placeholder="5000" min="1" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
-                    <label class="text-[11px] font-semibold text-gray-500">Note / Reason</label>
-                    <input type="text" id="udhar-note" placeholder="e.g., Rent share, Medical help" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    <label class="text-[11px] font-semibold text-gray-500">Note</label>
+                    <input type="text" id="udhar-note" placeholder="Reason..." class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow mt-2">Save Record</button>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Record</button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- SAFE JAVASCRIPT -->
     <script>
-        // GLOBAL APP STATE & USERS MANAGEMENT
-        let currentUser = JSON.parse(localStorage.getItem('active_user')) || null;
-        let userData = {
-            transactions: [],
-            cards: [],
-            udhar: []
+        let currentUser = null;
+        let userData = { transactions: [], cards: [], udhar: [] };
+        let catChart = null;
+        let incExpChart = null;
+
+        window.onload = function() {
+            let activeUser = localStorage.getItem('active_user');
+            if (activeUser) {
+                try {
+                    currentUser = JSON.parse(activeUser);
+                    loadUserData();
+                    showDashboard();
+                } catch(e) {
+                    logout();
+                }
+            }
         };
 
-        // Charts Instances
-        let categoryChartInstance = null;
-        let incomeExpenseChartInstance = null;
-
-        // INITIALIZATION
-        window.addEventListener('load', () => {
-            if (currentUser) {
-                loadUserData();
-                showDashboard();
-            }
-        });
-
-        // AUTHENTICATION SYSTEM
         function switchAuthTab(tab) {
-            const loginForm = document.getElementById('login-form');
-            const signupForm = document.getElementById('signup-form');
-            const tabLogin = document.getElementById('tab-login');
-            const tabSignup = document.getElementById('tab-signup');
-
             if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-                tabLogin.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition';
-                tabSignup.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition';
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('signup-form').classList.add('hidden');
+                document.getElementById('tab-login').className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600';
+                document.getElementById('tab-signup').className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400';
             } else {
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-                tabSignup.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition';
-                tabLogin.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition';
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('signup-form').classList.remove('hidden');
+                document.getElementById('tab-signup').className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600';
+                document.getElementById('tab-login').className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400';
             }
         }
 
@@ -367,10 +332,9 @@
                 const password = document.getElementById('signup-password').value;
 
                 if (users.find(u => u.email === email)) {
-                    alert('User already exists! Please Sign In.');
+                    alert('User already exists!');
                     return;
                 }
-
                 const newUser = { name, email, password };
                 users.push(newUser);
                 localStorage.setItem('app_users', JSON.stringify(users));
@@ -378,7 +342,6 @@
             } else {
                 const email = document.getElementById('login-email').value.toLowerCase();
                 const password = document.getElementById('login-password').value;
-
                 const user = users.find(u => u.email === email && u.password === password);
                 if (!user && email !== 'demo@app.com') {
                     alert('Invalid credentials!');
@@ -396,25 +359,21 @@
             currentUser = { name: 'Rahul Sharma', email: 'demo@app.com' };
             localStorage.setItem('active_user', JSON.stringify(currentUser));
             
-            // Populate sample data for demo user
             let dataKey = 'user_data_' + currentUser.email;
             if (!localStorage.getItem(dataKey)) {
-                const sampleData = {
+                localStorage.setItem(dataKey, JSON.stringify({
                     transactions: [
-                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, date: '25 Oct' },
-                        { id: 2, type: 'expense', category: 'Food', title: 'Restaurant & Groceries', amount: 4500, date: '26 Oct' },
-                        { id: 3, type: 'expense', category: 'Bills', title: 'Electricity Bill', amount: 2200, date: '27 Oct' }
+                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 50000, date: '25 Oct' },
+                        { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, date: '26 Oct' }
                     ],
                     cards: [
-                        { id: 101, name: 'HDFC Regalia', limit: 150000, used: 24500, stmtDay: 15, dueDay: 5 }
+                        { id: 101, name: 'HDFC Card', limit: 100000, used: 12000, stmtDay: 15, dueDay: 5 }
                     ],
                     udhar: [
-                        { id: 201, type: 'given', person: 'Vikas (Friend)', amount: 3000, note: 'Weekend Trip', status: 'pending' }
+                        { id: 201, type: 'given', person: 'Vikas', amount: 2000, note: 'Trip', status: 'pending' }
                     ]
-                };
-                localStorage.setItem(dataKey, JSON.stringify(sampleData));
+                }));
             }
-
             loadUserData();
             showDashboard();
         }
@@ -426,55 +385,54 @@
             document.getElementById('app-container').classList.add('hidden');
         }
 
-        // DATA PERSISTENCE PER USER
         function loadUserData() {
             if (!currentUser) return;
-            const key = 'user_data_' + currentUser.email;
-            userData = JSON.parse(localStorage.getItem(key)) || { transactions: [], cards: [], udhar: [] };
+            let raw = localStorage.getItem('user_data_' + currentUser.email);
+            userData = raw ? JSON.parse(raw) : { transactions: [], cards: [], udhar: [] };
+            if (!userData.transactions) userData.transactions = [];
+            if (!userData.cards) userData.cards = [];
+            if (!userData.udhar) userData.udhar = [];
         }
 
         function saveUserData() {
             if (!currentUser) return;
-            const key = 'user_data_' + currentUser.email;
-            localStorage.setItem(key, JSON.stringify(userData));
+            localStorage.setItem('user_data_' + currentUser.email, JSON.stringify(userData));
             renderAllViews();
         }
 
-        // DASHBOARD VIEW NAVIGATION
         function showDashboard() {
             document.getElementById('auth-container').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
 
             document.getElementById('user-display-name').innerText = currentUser.name;
-            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            document.getElementById('user-avatar').innerText = initials || 'U';
+            document.getElementById('user-avatar').innerText = (currentUser.name[0] || 'U').toUpperCase();
 
-            renderAllViews();
+            switchAppTab('transactions');
         }
 
         function switchAppTab(tabName) {
-            const tabs = ['transactions', 'cards', 'udhar', 'reports'];
-            tabs.forEach(t => {
-                document.getElementById('view-' + t).classList.add('hidden');
-                document.getElementById('nav-' + t).className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium';
+            ['transactions', 'cards', 'udhar', 'reports'].forEach(t => {
+                let view = document.getElementById('view-' + t);
+                let nav = document.getElementById('nav-' + t);
+                if (view) view.classList.add('hidden');
+                if (nav) nav.className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium';
             });
 
-            document.getElementById('view-' + tabName).classList.remove('hidden');
-            document.getElementById('nav-' + tabName).className = 'flex flex-col items-center text-indigo-600 text-xs font-medium';
+            let activeView = document.getElementById('view-' + tabName);
+            let activeNav = document.getElementById('nav-' + tabName);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeNav) activeNav.className = 'flex flex-col items-center text-indigo-600 text-xs font-medium';
 
-            if (tabName === 'reports') {
-                renderReports();
-            }
+            renderAllViews();
+            if (tabName === 'reports') renderReports();
         }
 
-        // RENDER LOGIC
         function renderAllViews() {
             renderTransactions();
             renderCards();
             renderUdhar();
         }
 
-        // 1. TRANSACTIONS
         function addTransaction(e) {
             e.preventDefault();
             const type = document.getElementById('tx-type').value;
@@ -482,16 +440,14 @@
             const title = document.getElementById('tx-title').value.trim();
             const amount = parseFloat(document.getElementById('tx-amount').value);
 
-            const newTx = {
+            userData.transactions.unshift({
                 id: Date.now(),
                 type,
                 category,
                 title,
                 amount,
                 date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-            };
-
-            userData.transactions.unshift(newTx);
+            });
             saveUserData();
             e.target.reset();
         }
@@ -502,246 +458,173 @@
         }
 
         function renderTransactions() {
-            let totalIncome = 0;
-            let totalExpense = 0;
-
+            let inc = 0, exp = 0;
             const listEl = document.getElementById('tx-list');
             listEl.innerHTML = '';
 
             userData.transactions.forEach(t => {
-                if (t.type === 'income') totalIncome += t.amount;
-                if (t.type === 'expense') totalExpense += t.amount;
+                if (t.type === 'income') inc += t.amount;
+                if (t.type === 'expense') exp += t.amount;
 
                 const row = document.createElement('div');
-                row.className = 'flex justify-between items-center py-2.5';
+                row.className = 'flex justify-between items-center py-2';
                 row.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${t.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
-                            <i class="fa-solid ${t.type === 'income' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-semibold text-gray-800">${t.title}</p>
-                            <p class="text-[10px] text-gray-400">${t.category} • ${t.date}</p>
-                        </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-800">${t.title}</p>
+                        <p class="text-[10px] text-gray-400">${t.category} • ${t.date}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
                             ${t.type === 'income' ? '+' : '-'}₹${t.amount.toLocaleString('en-IN')}
                         </span>
-                        <button onclick="deleteTransaction(${t.id})" class="text-gray-300 hover:text-rose-500 text-xs pl-1"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="deleteTransaction(${t.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 listEl.appendChild(row);
             });
 
-            // Card summaries
-            let totalCardBalance = userData.cards.reduce((sum, c) => sum + c.used, 0);
-            let totalNetUdhar = userData.udhar.filter(u => u.status !== 'settled').reduce((acc, u) => u.type === 'taken' ? acc + u.amount : acc - u.amount, 0);
+            let cardUsed = userData.cards.reduce((sum, c) => sum + (c.used || 0), 0);
+            let netUdhar = userData.udhar.filter(u => u.status !== 'settled').reduce((acc, u) => u.type === 'taken' ? acc + u.amount : acc - u.amount, 0);
 
-            document.getElementById('dash-income').innerText = '₹' + totalIncome.toLocaleString('en-IN');
-            document.getElementById('dash-expense').innerText = '₹' + totalExpense.toLocaleString('en-IN');
-            document.getElementById('dash-balance').innerText = '₹' + (totalIncome - totalExpense).toLocaleString('en-IN');
-            document.getElementById('dash-liabilities').innerText = '₹' + (totalCardBalance + Math.max(0, totalNetUdhar)).toLocaleString('en-IN');
-            document.getElementById('tx-count').innerText = userData.transactions.length + ' items';
+            document.getElementById('dash-income').innerText = '₹' + inc.toLocaleString('en-IN');
+            document.getElementById('dash-expense').innerText = '₹' + exp.toLocaleString('en-IN');
+            document.getElementById('dash-balance').innerText = '₹' + (inc - exp).toLocaleString('en-IN');
+            document.getElementById('dash-liabilities').innerText = '₹' + (cardUsed + Math.max(0, netUdhar)).toLocaleString('en-IN');
         }
 
-        // 2. CREDIT CARDS MANAGEMENT
-        function toggleCardModal(show) {
-            document.getElementById('card-modal').classList.toggle('hidden', !show);
-        }
-
+        function toggleCardModal(show) { document.getElementById('card-modal').classList.toggle('hidden', !show); }
         function saveCreditCard(e) {
             e.preventDefault();
-            const name = document.getElementById('card-name').value;
-            const limit = parseFloat(document.getElementById('card-limit').value);
-            const used = parseFloat(document.getElementById('card-used').value);
-            const stmtDay = parseInt(document.getElementById('card-stmt-day').value);
-            const dueDay = parseInt(document.getElementById('card-due-day').value);
-
-            userData.cards.push({ id: Date.now(), name, limit, used, stmtDay, dueDay });
+            userData.cards.push({
+                id: Date.now(),
+                name: document.getElementById('card-name').value,
+                limit: parseFloat(document.getElementById('card-limit').value),
+                used: parseFloat(document.getElementById('card-used').value),
+                stmtDay: parseInt(document.getElementById('card-stmt-day').value),
+                dueDay: parseInt(document.getElementById('card-due-day').value)
+            });
             saveUserData();
             toggleCardModal(false);
             e.target.reset();
         }
-
-        function deleteCard(id) {
-            if (confirm("Delete this card?")) {
-                userData.cards = userData.cards.filter(c => c.id !== id);
-                saveUserData();
-            }
-        }
+        function deleteCard(id) { userData.cards = userData.cards.filter(c => c.id !== id); saveUserData(); }
 
         function renderCards() {
             const container = document.getElementById('cards-container');
             container.innerHTML = '';
-
-            if (userData.cards.length === 0) {
-                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">No credit cards added. Add your first card to track bills and due dates!</p>';
+            if (!userData.cards.length) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No credit cards added.</p>';
                 return;
             }
-
             userData.cards.forEach(c => {
-                const avail = c.limit - c.used;
-                const cardEl = document.createElement('div');
-                cardEl.className = 'bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-4 text-white shadow-md relative overflow-hidden';
-                cardEl.innerHTML = `
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <span class="text-[10px] font-semibold text-indigo-400 uppercase tracking-wider">Credit Card</span>
-                            <h4 class="text-sm font-bold text-white">${c.name}</h4>
-                        </div>
-                        <button onclick="deleteCard(${c.id})" class="text-gray-500 hover:text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>
+                const el = document.createElement('div');
+                el.className = 'bg-slate-900 rounded-2xl p-4 text-white shadow relative';
+                el.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="text-sm font-bold">${c.name}</h4>
+                        <button onclick="deleteCard(${c.id})" class="text-gray-400 hover:text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 mb-3">
-                        <div>
-                            <p class="text-[10px] text-gray-400">Used / Outstanding</p>
-                            <p class="text-base font-bold text-amber-400">₹${c.used.toLocaleString('en-IN')}</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-gray-400">Available Limit</p>
-                            <p class="text-base font-bold text-emerald-400">₹${avail.toLocaleString('en-IN')}</p>
-                        </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+                        <div><p class="text-[10px] text-gray-400">Used</p><p class="font-bold text-amber-400">₹${c.used.toLocaleString('en-IN')}</p></div>
+                        <div><p class="text-[10px] text-gray-400">Limit</p><p class="font-bold text-emerald-400">₹${c.limit.toLocaleString('en-IN')}</p></div>
                     </div>
-                    <div class="flex justify-between items-center text-[10px] bg-slate-800/80 p-2 rounded-xl border border-slate-700">
-                        <span class="text-gray-300"><i class="fa-regular fa-calendar-check text-indigo-400"></i> Stmt: ${c.stmtDay}th of month</span>
-                        <span class="text-rose-300 font-semibold"><i class="fa-solid fa-clock text-rose-400"></i> Due: ${c.dueDay}th of month</span>
+                    <div class="text-[10px] text-gray-300 flex justify-between border-t border-slate-800 pt-2">
+                        <span>Stmt: ${c.stmtDay}th</span>
+                        <span class="text-rose-300">Due: ${c.dueDay}th</span>
                     </div>
                 `;
-                container.appendChild(cardEl);
+                container.appendChild(el);
             });
         }
 
-        // 3. UDHAR & INFORMAL LOANS
-        function toggleUdharModal(show) {
-            document.getElementById('udhar-modal').classList.toggle('hidden', !show);
-        }
-
+        function toggleUdharModal(show) { document.getElementById('udhar-modal').classList.toggle('hidden', !show); }
         function saveUdharEntry(e) {
             e.preventDefault();
-            const type = document.getElementById('udhar-type').value;
-            const person = document.getElementById('udhar-person').value.trim();
-            const amount = parseFloat(document.getElementById('udhar-amount').value);
-            const note = document.getElementById('udhar-note').value.trim();
-
             userData.udhar.push({
                 id: Date.now(),
-                type,
-                person,
-                amount,
-                note,
-                status: 'pending',
-                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                type: document.getElementById('udhar-type').value,
+                person: document.getElementById('udhar-person').value,
+                amount: parseFloat(document.getElementById('udhar-amount').value),
+                note: document.getElementById('udhar-note').value,
+                status: 'pending'
             });
-
             saveUserData();
             toggleUdharModal(false);
             e.target.reset();
         }
-
         function settleUdhar(id) {
-            const entry = userData.udhar.find(u => u.id === id);
-            if (entry) {
-                entry.status = 'settled';
-                saveUserData();
-            }
-        }
-
-        function deleteUdhar(id) {
-            userData.udhar = userData.udhar.filter(u => u.id !== id);
+            let u = userData.udhar.find(x => x.id === id);
+            if (u) u.status = 'settled';
             saveUserData();
         }
+        function deleteUdhar(id) { userData.udhar = userData.udhar.filter(u => u.id !== id); saveUserData(); }
 
         function renderUdhar() {
             const list = document.getElementById('udhar-list');
             list.innerHTML = '';
+            let given = 0, taken = 0;
 
-            let totalGiven = 0;
-            let totalTaken = 0;
-
-            if (userData.udhar.length === 0) {
-                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">No Udhar records found.</p>';
+            if (!userData.udhar.length) {
+                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No udhar records.</p>';
             }
 
             userData.udhar.forEach(u => {
                 if (u.status !== 'settled') {
-                    if (u.type === 'given') totalGiven += u.amount;
-                    if (u.type === 'taken') totalTaken += u.amount;
+                    if (u.type === 'given') given += u.amount;
+                    if (u.type === 'taken') taken += u.amount;
                 }
 
                 const item = document.createElement('div');
-                item.className = `p-3.5 rounded-2xl bg-white border ${u.status === 'settled' ? 'border-gray-100 opacity-50' : 'border-gray-200'} shadow-sm flex justify-between items-center`;
+                item.className = 'p-3 rounded-2xl bg-white border border-gray-100 shadow-sm flex justify-between items-center';
                 item.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs ${u.type === 'given' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'}">
-                            <i class="fa-solid ${u.type === 'given' ? 'fa-hand-holding-hand' : 'fa-piggy-bank'}"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-800">${u.person} ${u.status === 'settled' ? '<span class="text-[9px] bg-gray-200 px-1.5 py-0.5 rounded ml-1">Settled</span>' : ''}</p>
-                            <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'} ${u.note ? '• ' + u.note : ''}</p>
-                        </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-800">${u.person} ${u.status === 'settled' ? '<span class="text-[9px] bg-gray-200 px-1 rounded">Settled</span>' : ''}</p>
+                        <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-purple-600'}">
-                            ₹${u.amount.toLocaleString('en-IN')}
-                        </span>
-                        ${u.status !== 'settled' ? `<button onclick="settleUdhar(${u.id})" title="Mark as Paid" class="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg font-semibold hover:bg-emerald-100">Settle</button>` : ''}
+                        <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-purple-600'}">₹${u.amount.toLocaleString('en-IN')}</span>
+                        ${u.status !== 'settled' ? `<button onclick="settleUdhar(${u.id})" class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded">Settle</button>` : ''}
                         <button onclick="deleteUdhar(${u.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(item);
             });
 
-            document.getElementById('total-udhar-given').innerText = '₹' + totalGiven.toLocaleString('en-IN');
-            document.getElementById('total-udhar-taken').innerText = '₹' + totalTaken.toLocaleString('en-IN');
+            document.getElementById('total-udhar-given').innerText = '₹' + given.toLocaleString('en-IN');
+            document.getElementById('total-udhar-taken').innerText = '₹' + taken.toLocaleString('en-IN');
         }
 
-        // 4. REPORTS & GRAPHICAL ANALYTICS
         function renderReports() {
-            // Category Expenses Data
+            if (typeof Chart === 'undefined') return;
+
             const catMap = {};
             userData.transactions.filter(t => t.type === 'expense').forEach(t => {
                 catMap[t.category] = (catMap[t.category] || 0) + t.amount;
             });
 
-            const catLabels = Object.keys(catMap);
-            const catValues = Object.values(catMap);
-
-            // Doughnut Chart
             const ctxCat = document.getElementById('categoryChart').getContext('2d');
-            if (categoryChartInstance) categoryChartInstance.destroy();
-            categoryChartInstance = new Chart(ctxCat, {
+            if (catChart) catChart.destroy();
+            catChart = new Chart(ctxCat, {
                 type: 'doughnut',
                 data: {
-                    labels: catLabels.length ? catLabels : ['No Expenses'],
-                    datasets: [{
-                        data: catValues.length ? catValues : [1],
-                        backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#64748b']
-                    }]
+                    labels: Object.keys(catMap).length ? Object.keys(catMap) : ['No Expenses'],
+                    datasets: [{ data: Object.values(catMap).length ? Object.values(catMap) : [1], backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6'] }]
                 },
-                options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+                options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
             });
 
-            // Income vs Expense Bar Chart
-            const totalInc = userData.transactions.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
-            const totalExp = userData.transactions.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+            const inc = userData.transactions.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const exp = userData.transactions.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
 
-            const ctxIncExp = document.getElementById('incomeExpenseChart').getContext('2d');
-            if (incomeExpenseChartInstance) incomeExpenseChartInstance.destroy();
-            incomeExpenseChartInstance = new Chart(ctxIncExp, {
+            const ctxInc = document.getElementById('incomeExpenseChart').getContext('2d');
+            if (incExpChart) incExpChart.destroy();
+            incExpChart = new Chart(ctxInc, {
                 type: 'bar',
                 data: {
                     labels: ['Income', 'Expense'],
-                    datasets: [{
-                        label: 'Amount (₹)',
-                        data: [totalInc, totalExp],
-                        backgroundColor: ['#10b981', '#f43f5e'],
-                        borderRadius: 8
-                    }]
+                    datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderRadius: 6 }]
                 },
-                options: {
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
+                options: { plugins: { legend: { display: false } } }
             });
         }
     </script>
