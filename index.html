@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Finance & Udhar Manager</title>
+    <title>Smart Finance, Loans & Udhar Manager</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -20,7 +20,7 @@
                 <i class="fa-solid fa-wallet"></i>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">FinanceManager Pro</h1>
-            <p class="text-xs text-gray-500">Budget, Credit Cards & Udhar Tracker</p>
+            <p class="text-xs text-gray-500">Budget, Credit Cards, Loans & Udhar Tracker</p>
         </div>
 
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
@@ -98,7 +98,7 @@
                         <p class="text-xl font-bold mt-1" id="dash-balance">₹0</p>
                     </div>
                     <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-2xl text-white shadow">
-                        <p class="text-xs opacity-80">Cards & Udhar</p>
+                        <p class="text-xs opacity-80">Total Liabilities</p>
                         <p class="text-xl font-bold mt-1" id="dash-liabilities">₹0</p>
                     </div>
                 </div>
@@ -123,6 +123,7 @@
                                     <option value="Food">Food & Dining</option>
                                     <option value="Shopping">Shopping & Grocery</option>
                                     <option value="Bills">Bills & Utilities</option>
+                                    <option value="EMI">EMI & Loans</option>
                                     <option value="Travel">Travel & Fuel</option>
                                     <option value="Other">Other</option>
                                 </select>
@@ -130,7 +131,7 @@
                         </div>
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500">Title</label>
-                            <input type="text" id="tx-title" placeholder="e.g., Grocery Shopping" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                            <input type="text" id="tx-title" placeholder="e.g., Grocery, Car Loan EMI" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500">Amount (₹)</label>
@@ -148,7 +149,24 @@
                 </div>
             </div>
 
-            <!-- TAB 2: CREDIT CARDS -->
+            <!-- TAB 2: BANK LOANS & EMIs -->
+            <div id="view-loans" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-gray-800">Bank Loans & EMIs</h3>
+                    <button onclick="toggleLoanModal(true)" class="px-3 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Add Loan
+                    </button>
+                </div>
+
+                <div class="bg-purple-50 border border-purple-200 p-4 rounded-2xl">
+                    <p class="text-xs text-purple-700 font-semibold">Total Loan Outstanding</p>
+                    <p class="text-xl font-bold text-purple-900" id="total-loan-balance">₹0</p>
+                </div>
+
+                <div id="loans-container" class="space-y-3"></div>
+            </div>
+
+            <!-- TAB 3: CREDIT CARDS -->
             <div id="view-cards" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">My Credit Cards</h3>
@@ -159,10 +177,10 @@
                 <div id="cards-container" class="space-y-3"></div>
             </div>
 
-            <!-- TAB 3: UDHAR & LOANS -->
+            <!-- TAB 4: UDHAR & LOANS -->
             <div id="view-udhar" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-gray-800">Udhar Tracker</h3>
+                    <h3 class="text-sm font-bold text-gray-800">Friends & Relatives Udhar</h3>
                     <button onclick="toggleUdharModal(true)" class="px-3 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow flex items-center gap-1">
                         <i class="fa-solid fa-plus"></i> Add Udhar
                     </button>
@@ -173,16 +191,16 @@
                         <p class="text-[11px] text-amber-700 font-semibold">Given (Lena hai)</p>
                         <p class="text-lg font-bold text-amber-800" id="total-udhar-given">₹0</p>
                     </div>
-                    <div class="bg-purple-50 border border-purple-200 p-3 rounded-2xl">
-                        <p class="text-[11px] text-purple-700 font-semibold">Taken (Dena hai)</p>
-                        <p class="text-lg font-bold text-purple-800" id="total-udhar-taken">₹0</p>
+                    <div class="bg-rose-50 border border-rose-200 p-3 rounded-2xl">
+                        <p class="text-[11px] text-rose-700 font-semibold">Taken (Dena hai)</p>
+                        <p class="text-lg font-bold text-rose-800" id="total-udhar-taken">₹0</p>
                     </div>
                 </div>
 
                 <div id="udhar-list" class="space-y-2"></div>
             </div>
 
-            <!-- TAB 4: REPORTS -->
+            <!-- TAB 5: REPORTS -->
             <div id="view-reports" class="space-y-4 hidden">
                 <h3 class="text-sm font-bold text-gray-800">Financial Insights</h3>
 
@@ -202,23 +220,56 @@
 
         <!-- Bottom Navigation -->
         <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around py-2 z-30 shadow-lg">
-            <button onclick="switchAppTab('transactions')" id="nav-tx" class="flex flex-col items-center text-indigo-600 text-xs font-medium">
-                <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
+            <button onclick="switchAppTab('transactions')" id="nav-tx" class="flex flex-col items-center text-indigo-600 text-[11px] font-medium">
+                <i class="fa-solid fa-house text-base mb-0.5"></i>
                 <span>Home</span>
             </button>
-            <button onclick="switchAppTab('cards')" id="nav-cards" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
-                <i class="fa-solid fa-credit-card text-lg mb-0.5"></i>
+            <button onclick="switchAppTab('loans')" id="nav-loans" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium">
+                <i class="fa-solid fa-landmark text-base mb-0.5"></i>
+                <span>Loans</span>
+            </button>
+            <button onclick="switchAppTab('cards')" id="nav-cards" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium">
+                <i class="fa-solid fa-credit-card text-base mb-0.5"></i>
                 <span>Cards</span>
             </button>
-            <button onclick="switchAppTab('udhar')" id="nav-udhar" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
-                <i class="fa-solid fa-hand-holding-dollar text-lg mb-0.5"></i>
+            <button onclick="switchAppTab('udhar')" id="nav-udhar" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium">
+                <i class="fa-solid fa-hand-holding-dollar text-base mb-0.5"></i>
                 <span>Udhar</span>
             </button>
             <button onclick="switchAppTab('reports')" id="nav-reports" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
-                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+                <i class="fa-solid fa-chart-pie text-base mb-0.5"></i>
                 <span>Reports</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL: ADD BANK LOAN -->
+    <div id="loan-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-800">Add Bank Loan / EMI</h3>
+                <button onclick="toggleLoanModal(false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveLoan(event)" class="space-y-3">
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Loan Title / Provider</label>
+                    <input type="text" id="loan-name" placeholder="e.g., Car Loan, SBI Personal Loan" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Total Loan Amount (₹)</label>
+                    <input type="number" id="loan-total" placeholder="500000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Remaining Balance (₹)</label>
+                    <input type="number" id="loan-remaining" placeholder="350000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Monthly EMI (₹)</label>
+                    <input type="number" id="loan-emi" placeholder="12500" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Loan</button>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL: CREDIT CARD -->
@@ -288,10 +339,10 @@
         </div>
     </div>
 
-    <!-- SAFE JAVASCRIPT -->
+    <!-- JAVASCRIPT -->
     <script>
         let currentUser = null;
-        let userData = { transactions: [], cards: [], udhar: [] };
+        let userData = { transactions: [], loans: [], cards: [], udhar: [] };
         let catChart = null;
         let incExpChart = null;
 
@@ -363,8 +414,11 @@
             if (!localStorage.getItem(dataKey)) {
                 localStorage.setItem(dataKey, JSON.stringify({
                     transactions: [
-                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 50000, date: '25 Oct' },
+                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, date: '25 Oct' },
                         { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, date: '26 Oct' }
+                    ],
+                    loans: [
+                        { id: 301, name: 'HDFC Car Loan', total: 400000, remaining: 250000, emi: 9500 }
                     ],
                     cards: [
                         { id: 101, name: 'HDFC Card', limit: 100000, used: 12000, stmtDay: 15, dueDay: 5 }
@@ -388,8 +442,9 @@
         function loadUserData() {
             if (!currentUser) return;
             let raw = localStorage.getItem('user_data_' + currentUser.email);
-            userData = raw ? JSON.parse(raw) : { transactions: [], cards: [], udhar: [] };
+            userData = raw ? JSON.parse(raw) : { transactions: [], loans: [], cards: [], udhar: [] };
             if (!userData.transactions) userData.transactions = [];
+            if (!userData.loans) userData.loans = [];
             if (!userData.cards) userData.cards = [];
             if (!userData.udhar) userData.udhar = [];
         }
@@ -411,17 +466,17 @@
         }
 
         function switchAppTab(tabName) {
-            ['transactions', 'cards', 'udhar', 'reports'].forEach(t => {
+            ['transactions', 'loans', 'cards', 'udhar', 'reports'].forEach(t => {
                 let view = document.getElementById('view-' + t);
                 let nav = document.getElementById('nav-' + t);
                 if (view) view.classList.add('hidden');
-                if (nav) nav.className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium';
+                if (nav) nav.className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-[11px] font-medium';
             });
 
             let activeView = document.getElementById('view-' + tabName);
             let activeNav = document.getElementById('nav-' + tabName);
             if (activeView) activeView.classList.remove('hidden');
-            if (activeNav) activeNav.className = 'flex flex-col items-center text-indigo-600 text-xs font-medium';
+            if (activeNav) activeNav.className = 'flex flex-col items-center text-indigo-600 text-[11px] font-medium';
 
             renderAllViews();
             if (tabName === 'reports') renderReports();
@@ -429,6 +484,7 @@
 
         function renderAllViews() {
             renderTransactions();
+            renderLoans();
             renderCards();
             renderUdhar();
         }
@@ -483,15 +539,93 @@
                 listEl.appendChild(row);
             });
 
+            let totalLoansRemaining = userData.loans.reduce((sum, l) => sum + (l.remaining || 0), 0);
             let cardUsed = userData.cards.reduce((sum, c) => sum + (c.used || 0), 0);
             let netUdhar = userData.udhar.filter(u => u.status !== 'settled').reduce((acc, u) => u.type === 'taken' ? acc + u.amount : acc - u.amount, 0);
+
+            let totalLiabilities = totalLoansRemaining + cardUsed + Math.max(0, netUdhar);
 
             document.getElementById('dash-income').innerText = '₹' + inc.toLocaleString('en-IN');
             document.getElementById('dash-expense').innerText = '₹' + exp.toLocaleString('en-IN');
             document.getElementById('dash-balance').innerText = '₹' + (inc - exp).toLocaleString('en-IN');
-            document.getElementById('dash-liabilities').innerText = '₹' + (cardUsed + Math.max(0, netUdhar)).toLocaleString('en-IN');
+            document.getElementById('dash-liabilities').innerText = '₹' + totalLiabilities.toLocaleString('en-IN');
         }
 
+        // BANK LOANS LOGIC
+        function toggleLoanModal(show) { document.getElementById('loan-modal').classList.toggle('hidden', !show); }
+        function saveLoan(e) {
+            e.preventDefault();
+            userData.loans.push({
+                id: Date.now(),
+                name: document.getElementById('loan-name').value,
+                total: parseFloat(document.getElementById('loan-total').value),
+                remaining: parseFloat(document.getElementById('loan-remaining').value),
+                emi: parseFloat(document.getElementById('loan-emi').value)
+            });
+            saveUserData();
+            toggleLoanModal(false);
+            e.target.reset();
+        }
+        function payEMI(loanId) {
+            let loan = userData.loans.find(l => l.id === loanId);
+            if (loan && loan.remaining > 0) {
+                let payAmount = Math.min(loan.emi, loan.remaining);
+                loan.remaining -= payAmount;
+                
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'expense',
+                    category: 'EMI',
+                    title: loan.name + ' EMI Paid',
+                    amount: payAmount,
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+
+                saveUserData();
+            }
+        }
+        function deleteLoan(id) { userData.loans = userData.loans.filter(l => l.id !== id); saveUserData(); }
+
+        function renderLoans() {
+            const container = document.getElementById('loans-container');
+            container.innerHTML = '';
+            let totalRemaining = 0;
+
+            if (!userData.loans.length) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No bank loans added.</p>';
+            }
+
+            userData.loans.forEach(l => {
+                totalRemaining += l.remaining;
+                const el = document.createElement('div');
+                el.className = 'bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2';
+                el.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-800">${l.name}</h4>
+                            <p class="text-[10px] text-gray-400">Total Loan: ₹${l.total.toLocaleString('en-IN')}</p>
+                        </div>
+                        <button onclick="deleteLoan(${l.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <div>
+                            <span class="text-[10px] text-gray-400">Remaining</span>
+                            <p class="font-bold text-purple-700">₹${l.remaining.toLocaleString('en-IN')}</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400">Monthly EMI</span>
+                            <p class="font-bold text-gray-800">₹${l.emi.toLocaleString('en-IN')}</p>
+                        </div>
+                    </div>
+                    ${l.remaining > 0 ? `<button onclick="payEMI(${l.id})" class="w-full py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold rounded-xl text-xs border border-purple-200 mt-1">Pay Monthly EMI</button>` : '<p class="text-[10px] text-emerald-600 font-bold text-center">Loan Completed 🎉</p>'}
+                `;
+                container.appendChild(el);
+            });
+
+            document.getElementById('total-loan-balance').innerText = '₹' + totalRemaining.toLocaleString('en-IN');
+        }
+
+        // CARDS LOGIC
         function toggleCardModal(show) { document.getElementById('card-modal').classList.toggle('hidden', !show); }
         function saveCreditCard(e) {
             e.preventDefault();
@@ -525,7 +659,7 @@
                         <button onclick="deleteCard(${c.id})" class="text-gray-400 hover:text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-xs mb-2">
-                        <div><p class="text-[10px] text-gray-400">Used</p><p class="font-bold text-amber-400">₹${c.used.toLocaleString('en-IN')}</p></div>
+                        <div><p class="text-[10px] text-gray-400">Used Balance</p><p class="font-bold text-amber-400">₹${c.used.toLocaleString('en-IN')}</p></div>
                         <div><p class="text-[10px] text-gray-400">Limit</p><p class="font-bold text-emerald-400">₹${c.limit.toLocaleString('en-IN')}</p></div>
                     </div>
                     <div class="text-[10px] text-gray-300 flex justify-between border-t border-slate-800 pt-2">
@@ -537,6 +671,7 @@
             });
         }
 
+        // UDHAR LOGIC
         function toggleUdharModal(show) { document.getElementById('udhar-modal').classList.toggle('hidden', !show); }
         function saveUdharEntry(e) {
             e.preventDefault();
@@ -582,7 +717,7 @@
                         <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-purple-600'}">₹${u.amount.toLocaleString('en-IN')}</span>
+                        <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-rose-600'}">₹${u.amount.toLocaleString('en-IN')}</span>
                         ${u.status !== 'settled' ? `<button onclick="settleUdhar(${u.id})" class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded">Settle</button>` : ''}
                         <button onclick="deleteUdhar(${u.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -594,6 +729,7 @@
             document.getElementById('total-udhar-taken').innerText = '₹' + taken.toLocaleString('en-IN');
         }
 
+        // REPORTS LOGIC
         function renderReports() {
             if (typeof Chart === 'undefined') return;
 
@@ -608,7 +744,7 @@
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(catMap).length ? Object.keys(catMap) : ['No Expenses'],
-                    datasets: [{ data: Object.values(catMap).length ? Object.values(catMap) : [1], backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6'] }]
+                    datasets: [{ data: Object.values(catMap).length ? Object.values(catMap) : [1], backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#64748b'] }]
                 },
                 options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
             });
