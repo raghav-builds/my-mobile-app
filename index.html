@@ -1,520 +1,749 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Budget & Expense Manager with Authentication</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Budget, Credit Card & Udhar Manager</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior-y: none;
-            touch-action: manipulation;
-        }
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(156, 163, 175, 0.4);
-            border-radius: 9999px;
-        }
-        .active-bounce:active {
-            transform: scale(0.96);
-            transition: transform 0.1s ease;
-        }
-    </style>
+    <!-- Chart.js for Reports -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-full flex flex-col font-sans transition-colors duration-200 select-none">
+<body class="bg-gray-100 min-h-screen text-gray-800 pb-20 select-none">
 
-    <!-- Toast Notification Banner -->
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-2.5 rounded-full shadow-lg text-sm font-medium flex items-center gap-2 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <i id="toast-icon" class="fas fa-circle-check text-green-400 dark:text-green-600"></i>
-        <span id="toast-msg">Action performed successfully</span>
-    </div>
+    <!-- AUTHENTICATION CONTAINER -->
+    <div id="auth-container" class="max-w-md mx-auto p-4 pt-10 min-h-screen flex flex-col justify-center">
+        <!-- Brand Header -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-white text-3xl shadow-lg shadow-indigo-200 mb-3">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">FinanceManager Pro</h1>
+            <p class="text-xs text-gray-500 mt-1">Manage Budget, Credit Cards, Loans & Udhar</p>
+        </div>
 
-    <!-- App Shell Container -->
-    <div class="flex-1 flex flex-col max-w-md w-full mx-auto bg-white dark:bg-gray-800 shadow-2xl overflow-hidden relative border-x border-gray-200 dark:border-gray-700">
-        
-        <!-- Header Bar (Only visible when logged in) -->
-        <header id="app-header" class="hidden pt-8 pb-3 px-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md sticky top-0 z-30 border-b border-gray-100 dark:border-gray-700/50 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div id="user-avatar" class="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-500 to-purple-500 flex items-center justify-center text-white shadow-md font-bold text-sm">
-                    U
+        <!-- Auth Card -->
+        <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-100 mb-6">
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition">Sign In</button>
+                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" onsubmit="handleAuth(event, 'login')" class="space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Email Address</label>
+                    <input type="email" id="login-email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="you@example.com">
                 </div>
                 <div>
-                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Welcome back</p>
-                    <h1 id="user-display-name" class="text-sm font-bold text-gray-900 dark:text-white leading-tight">User</h1>
+                    <label class="text-xs font-semibold text-gray-600">Password</label>
+                    <input type="password" id="login-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md transition">Sign In</button>
+                
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink mx-4 text-xs text-gray-400">or</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <button type="button" onclick="quickDemoLogin()" class="w-full py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold rounded-xl text-xs border border-emerald-200 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Quick Demo Login
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" onsubmit="handleAuth(event, 'signup')" class="space-y-4 hidden">
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Full Name</label>
+                    <input type="text" id="signup-name" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Rahul Sharma">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Email Address</label>
+                    <input type="email" id="signup-email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="you@example.com">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Password</label>
+                    <input type="password" id="signup-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md transition">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD APP CONTAINER -->
+    <div id="app-container" class="max-w-md mx-auto hidden min-h-screen flex flex-col">
+        <!-- Top App Bar -->
+        <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-30 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3">
+                <div id="user-avatar" class="w-10 h-10 bg-indigo-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow">RS</div>
+                <div>
+                    <h2 id="user-display-name" class="text-sm font-bold text-gray-800 leading-tight">User</h2>
+                    <span class="text-[11px] text-gray-500">Personal Dashboard</span>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-2">
-                <!-- Theme Toggle Button -->
-                <button id="theme-btn" onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 active-bounce">
-                    <i class="fas fa-moon text-xs"></i>
-                </button>
-                <!-- Logout Button -->
-                <button onclick="handleLogout()" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/40 flex items-center justify-center text-red-600 dark:text-red-400 active-bounce" title="Logout">
-                    <i class="fas fa-right-from-bracket text-xs"></i>
-                </button>
-            </div>
+            <button onclick="logout()" class="w-9 h-9 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-sm hover:bg-rose-100 transition" title="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
         </header>
 
-        <!-- Main Content Area -->
-        <main id="main-content" class="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-            
-            <!-- AUTH VIEW: SIGN IN -->
-            <section id="view-signin" class="space-y-5 pt-8">
-                <div class="text-center space-y-2">
-                    <div class="w-16 h-16 bg-brand-500/10 text-brand-600 rounded-3xl mx-auto flex items-center justify-center text-2xl shadow-inner">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Sign In to Budget App</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Manage your income, expenses, loans & credit cards safely.</p>
-                </div>
+        <!-- Dynamic Content Body -->
+        <main class="flex-1 p-4 space-y-5 overflow-y-auto">
 
-                <form id="signin-form" onsubmit="handleSignin(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Email Address</label>
-                        <input type="email" id="signin-email" required placeholder="name@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Password</label>
-                        <input type="password" id="signin-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-
-                    <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-brand-500/30 text-sm active-bounce">
-                        Sign In
-                    </button>
-                </form>
-
-                <div class="relative flex py-1 items-center">
-                    <div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                    <span class="flex-shrink mx-3 text-xs text-gray-400">OR</span>
-                    <div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                </div>
-
-                <!-- Demo Login Button -->
-                <button onclick="fillDemoCredentials()" class="w-full bg-indigo-50 dark:bg-gray-700 text-indigo-600 dark:text-indigo-300 font-semibold py-2.5 rounded-xl border border-indigo-100 dark:border-gray-600 text-xs active-bounce">
-                    <i class="fas fa-user-check mr-1.5"></i> Auto-fill Demo Account
-                </button>
-
-                <p class="text-center text-xs text-gray-500 dark:text-gray-400">
-                    Don't have an account? 
-                    <button onclick="switchAuthMode('signup')" class="text-brand-600 dark:text-brand-400 font-bold hover:underline">Sign Up</button>
-                </p>
-            </section>
-
-            <!-- AUTH VIEW: SIGN UP -->
-            <section id="view-signup" class="hidden space-y-5 pt-6">
-                <div class="text-center space-y-2">
-                    <div class="w-14 h-14 bg-purple-500/10 text-purple-600 rounded-2xl mx-auto flex items-center justify-center text-xl shadow-inner">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Create New Account</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Start tracking your personal finances today.</p>
-                </div>
-
-                <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-3.5">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Full Name</label>
-                        <input type="text" id="signup-name" required placeholder="Raghav Developer" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Email Address</label>
-                        <input type="email" id="signup-email" required placeholder="raghav@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Create Password</label>
-                        <input type="password" id="signup-password" minlength="4" required placeholder="At least 4 characters" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-
-                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-500/30 text-sm active-bounce">
-                        Create Account & Login
-                    </button>
-                </form>
-
-                <p class="text-center text-xs text-gray-500 dark:text-gray-400">
-                    Already have an account? 
-                    <button onclick="switchAuthMode('signin')" class="text-brand-600 dark:text-brand-400 font-bold hover:underline">Sign In</button>
-                </p>
-            </section>
-
-            <!-- APP VIEW: DASHBOARD (Requires Auth) -->
-            <section id="view-dashboard" class="hidden space-y-5 pb-16">
-                <!-- Summary Metrics -->
+            <!-- TAB 1: TRANSACTIONS & OVERVIEW -->
+            <div id="view-transactions" class="space-y-4">
+                <!-- Balance Cards -->
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-700 border-l-4 border-l-emerald-500">
-                        <div class="text-[10px] uppercase font-bold text-gray-400">Total Income</div>
-                        <div class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400" id="dash-income">₹0</div>
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl text-white shadow-md">
+                        <p class="text-xs opacity-80">Total Income</p>
+                        <p class="text-xl font-bold mt-1" id="dash-income">₹0</p>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-700 border-l-4 border-l-rose-500">
-                        <div class="text-[10px] uppercase font-bold text-gray-400">Total Expenses</div>
-                        <div class="text-lg font-extrabold text-rose-600 dark:text-rose-400" id="dash-expense">₹0</div>
+                    <div class="bg-gradient-to-br from-rose-500 to-pink-600 p-4 rounded-2xl text-white shadow-md">
+                        <p class="text-xs opacity-80">Total Expense</p>
+                        <p class="text-xl font-bold mt-1" id="dash-expense">₹0</p>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-700 border-l-4 border-l-brand-500">
-                        <div class="text-[10px] uppercase font-bold text-gray-400">Net Balance</div>
-                        <div class="text-lg font-extrabold text-brand-600 dark:text-brand-400" id="dash-balance">₹0</div>
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl text-white shadow-md">
+                        <p class="text-xs opacity-80">Net Balance</p>
+                        <p class="text-xl font-bold mt-1" id="dash-balance">₹0</p>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-700 border-l-4 border-l-amber-500">
-                        <div class="text-[10px] uppercase font-bold text-gray-400">Liabilities (Card/Loan)</div>
-                        <div class="text-lg font-extrabold text-amber-600 dark:text-amber-400" id="dash-liabilities">₹0</div>
+                    <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-2xl text-white shadow-md">
+                        <p class="text-xs opacity-80">Net Udhar & Cards</p>
+                        <p class="text-xl font-bold mt-1" id="dash-liabilities">₹0</p>
                     </div>
                 </div>
 
-                <!-- Add New Entry Box -->
-                <div class="bg-gray-50 dark:bg-gray-700/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-3">
-                    <h3 class="text-sm font-bold flex items-center gap-2">
-                        <i class="fas fa-plus-circle text-brand-500"></i> Add Entry
+                <!-- Add Quick Entry Form -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add New Transaction
                     </h3>
-                    <form id="entry-form" onsubmit="handleAddEntry(event)" class="space-y-2.5">
+                    <form onsubmit="addTransaction(event)" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Type</label>
-                                <select id="entry-type" class="w-full p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <label class="text-[11px] font-semibold text-gray-500">Type</label>
+                                <select id="tx-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
                                     <option value="income">🟢 Income</option>
                                     <option value="expense">🔴 Expense</option>
-                                    <option value="credit_card">💳 Credit Card</option>
-                                    <option value="loan">🏦 Loan / EMI</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Amount (₹)</label>
-                                <input type="number" id="entry-amount" required min="1" placeholder="5000" class="w-full p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <label class="text-[11px] font-semibold text-gray-500">Category</label>
+                                <select id="tx-category" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                                    <option value="Salary">Salary / Business</option>
+                                    <option value="Food">Food & Dining</option>
+                                    <option value="Shopping">Shopping & Grocery</option>
+                                    <option value="Bills">Bills & Utilities</option>
+                                    <option value="Travel">Travel & Fuel</option>
+                                    <option value="Other">Other</option>
+                                </select>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Title / Description</label>
-                            <input type="text" id="entry-title" required placeholder="Salary, Grocery, HDFC Bill" class="w-full p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <label class="text-[11px] font-semibold text-gray-500">Title / Description</label>
+                            <input type="text" id="tx-title" placeholder="e.g., Grocery Shopping, Salary" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
-                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition active-bounce">
-                            Save Entry
-                        </button>
+                        <div>
+                            <label class="text-[11px] font-semibold text-gray-500">Amount (₹)</label>
+                            <input type="number" id="tx-amount" min="1" step="any" placeholder="0.00" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow transition">Save Transaction</button>
                     </form>
                 </div>
 
-                <!-- History & Filters -->
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-bold">Transaction History</h3>
-                        <button onclick="clearUserData()" class="text-[11px] text-red-500 hover:underline">Clear Data</button>
+                <!-- History Section -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Transaction History</h3>
+                        <span class="text-[10px] text-gray-400" id="tx-count">0 items</span>
                     </div>
-
-                    <!-- Type Filters -->
-                    <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs">
-                        <button onclick="filterEntries('all')" class="filter-btn bg-brand-500 text-white px-3 py-1 rounded-full font-medium active-bounce shrink-0" data-filter="all">All</button>
-                        <button onclick="filterEntries('income')" class="filter-btn bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-medium active-bounce shrink-0" data-filter="income">Income</button>
-                        <button onclick="filterEntries('expense')" class="filter-btn bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-medium active-bounce shrink-0" data-filter="expense">Expense</button>
-                        <button onclick="filterEntries('credit_card')" class="filter-btn bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-medium active-bounce shrink-0" data-filter="credit_card">Card</button>
-                        <button onclick="filterEntries('loan')" class="filter-btn bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-medium active-bounce shrink-0" data-filter="loan">Loan</button>
-                    </div>
-
-                    <!-- List Container -->
-                    <div id="entries-list" class="space-y-2 max-h-72 overflow-y-auto">
-                        <!-- Entries rendered dynamically -->
+                    <div id="tx-list" class="space-y-2 max-h-72 overflow-y-auto divide-y divide-gray-50">
+                        <!-- Dynamic list -->
                     </div>
                 </div>
-            </section>
+            </div>
 
+            <!-- TAB 2: CREDIT CARDS MANAGER -->
+            <div id="view-cards" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-gray-800">My Credit Cards</h3>
+                    <button onclick="toggleCardModal(true)" class="px-3 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Add Card
+                    </button>
+                </div>
+
+                <!-- Cards List Container -->
+                <div id="cards-container" class="space-y-3">
+                    <!-- Dynamic Credit Cards rendered here -->
+                </div>
+            </div>
+
+            <!-- TAB 3: UDHAR & INFORMAL LOANS -->
+            <div id="view-udhar" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-gray-800">Udhar / Personal Loans</h3>
+                    <button onclick="toggleUdharModal(true)" class="px-3 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Add Udhar
+                    </button>
+                </div>
+
+                <!-- Udhar Summary Header -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-2xl">
+                        <p class="text-[11px] text-amber-700 font-semibold">Given (Lena Hai)</p>
+                        <p class="text-lg font-bold text-amber-800" id="total-udhar-given">₹0</p>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-200 p-3 rounded-2xl">
+                        <p class="text-[11px] text-purple-700 font-semibold">Taken (Dena Hai)</p>
+                        <p class="text-lg font-bold text-purple-800" id="total-udhar-taken">₹0</p>
+                    </div>
+                </div>
+
+                <!-- Udhar List -->
+                <div id="udhar-list" class="space-y-2">
+                    <!-- Dynamic Udhar entries -->
+                </div>
+            </div>
+
+            <!-- TAB 4: VISUAL REPORTS -->
+            <div id="view-reports" class="space-y-4 hidden">
+                <h3 class="text-sm font-bold text-gray-800">Financial Reports & Insights</h3>
+
+                <!-- Doughnut Chart: Expenses by Category -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Expense Breakdown</h4>
+                    <div class="w-full max-w-[240px] mx-auto">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bar Chart: Income vs Expense -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Income vs Expense</h4>
+                    <canvas id="incomeExpenseChart"></canvas>
+                </div>
+            </div>
         </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around py-2 z-30 shadow-lg">
+            <button onclick="switchAppTab('transactions')" id="nav-tx" class="flex flex-col items-center text-indigo-600 text-xs font-medium">
+                <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="switchAppTab('cards')" id="nav-cards" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
+                <i class="fa-solid fa-credit-card text-lg mb-0.5"></i>
+                <span>Cards</span>
+            </button>
+            <button onclick="switchAppTab('udhar')" id="nav-udhar" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
+                <i class="fa-solid fa-hand-holding-dollar text-lg mb-0.5"></i>
+                <span>Udhar</span>
+            </button>
+            <button onclick="switchAppTab('reports')" id="nav-reports" class="flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium">
+                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+                <span>Reports</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- Application Script Logic -->
+    <!-- MODAL: ADD CREDIT CARD -->
+    <div id="card-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-800">Add Credit Card</h3>
+                <button onclick="toggleCardModal(false)" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveCreditCard(event)" class="space-y-3">
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Card Name / Bank</label>
+                    <input type="text" id="card-name" placeholder="e.g., HDFC Regalia, SBI SimplyClick" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Total Credit Limit (₹)</label>
+                    <input type="number" id="card-limit" placeholder="100000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Current Outstanding Balance (₹)</label>
+                    <input type="number" id="card-used" placeholder="0" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500">Statement Date (Day)</label>
+                        <input type="number" id="card-stmt-day" min="1" max="31" placeholder="15" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-semibold text-gray-500">Due Date (Day)</label>
+                        <input type="number" id="card-due-day" min="1" max="31" placeholder="5" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow mt-2">Save Credit Card</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD UDHAR ENTRY -->
+    <div id="udhar-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-800">Add Udhar / Loan</h3>
+                <button onclick="toggleUdharModal(false)" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveUdharEntry(event)" class="space-y-3">
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Transaction Type</label>
+                    <select id="udhar-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                        <option value="given">🤝 Given (Maine Diya hai - Lena baki hai)</option>
+                        <option value="taken">🏦 Taken (Maine Liya hai - Dena baki hai)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Person / Friend Name</label>
+                    <input type="text" id="udhar-person" placeholder="e.g., Amit Kumar" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Amount (₹)</label>
+                    <input type="number" id="udhar-amount" placeholder="5000" min="1" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Note / Reason</label>
+                    <input type="text" id="udhar-note" placeholder="e.g., Rent share, Medical help" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow mt-2">Save Record</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // State variables
-        let currentUser = null;
-        let currentFilter = 'all';
+        // GLOBAL APP STATE & USERS MANAGEMENT
+        let currentUser = JSON.parse(localStorage.getItem('active_user')) || null;
+        let userData = {
+            transactions: [],
+            cards: [],
+            udhar: []
+        };
 
-        // Helper: LocalStorage operations
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('app_users')) || [];
+        // Charts Instances
+        let categoryChartInstance = null;
+        let incomeExpenseChartInstance = null;
+
+        // INITIALIZATION
+        window.addEventListener('load', () => {
+            if (currentUser) {
+                loadUserData();
+                showDashboard();
+            }
+        });
+
+        // AUTHENTICATION SYSTEM
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabLogin.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition';
+                tabSignup.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition';
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabSignup.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition';
+                tabLogin.className = 'flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition';
+            }
         }
 
-        function saveUsers(users) {
-            localStorage.setItem('app_users', JSON.stringify(users));
-        }
-
-        function getUserDataKey(email) {
-            return `budget_data_${email.toLowerCase()}`;
-        }
-
-        function getUserEntries(email) {
-            return JSON.parse(localStorage.getItem(getUserDataKey(email))) || [];
-        }
-
-        function saveUserEntries(email, entries) {
-            localStorage.setItem(getUserDataKey(email), JSON.stringify(entries));
-        }
-
-        // Theme Toggle
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            showToast(html.classList.contains('dark') ? 'Dark Mode' : 'Light Mode', 'fa-moon');
-        }
-
-        // Toast Messages
-        function showToast(message, iconClass = 'fa-circle-check') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = message;
-            document.getElementById('toast-icon').className = `fas ${iconClass} text-green-400 dark:text-green-600`;
-
-            toast.classList.remove('-translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('-translate-y-20', 'opacity-0');
-            }, 2300);
-        }
-
-        // Authentication Handlers
-        function switchAuthMode(mode) {
-            document.getElementById('view-signin').classList.toggle('hidden', mode !== 'signin');
-            document.getElementById('view-signup').classList.toggle('hidden', mode !== 'signup');
-        }
-
-        function fillDemoCredentials() {
-            document.getElementById('signin-email').value = 'demo@user.com';
-            document.getElementById('signin-password').value = '1234';
-            showToast('Demo account auto-filled');
-        }
-
-        function handleSignup(e) {
+        function handleAuth(e, type) {
             e.preventDefault();
-            const name = document.getElementById('signup-name').value.trim();
-            const email = document.getElementById('signup-email').value.trim().toLowerCase();
-            const password = document.getElementById('signup-password').value;
+            let users = JSON.parse(localStorage.getItem('app_users')) || [];
 
-            const users = getUsers();
-            if (users.find(u => u.email === email)) {
-                showToast('Email already registered!', 'fa-triangle-exclamation');
-                return;
+            if (type === 'signup') {
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value.toLowerCase();
+                const password = document.getElementById('signup-password').value;
+
+                if (users.find(u => u.email === email)) {
+                    alert('User already exists! Please Sign In.');
+                    return;
+                }
+
+                const newUser = { name, email, password };
+                users.push(newUser);
+                localStorage.setItem('app_users', JSON.stringify(users));
+                currentUser = { name, email };
+            } else {
+                const email = document.getElementById('login-email').value.toLowerCase();
+                const password = document.getElementById('login-password').value;
+
+                const user = users.find(u => u.email === email && u.password === password);
+                if (!user && email !== 'demo@app.com') {
+                    alert('Invalid credentials!');
+                    return;
+                }
+                currentUser = user || { name: 'Demo User', email: 'demo@app.com' };
             }
 
-            const newUser = { name, email, password };
-            users.push(newUser);
-            saveUsers(users);
-
-            // Seed initial demo data for new user
-            saveUserEntries(email, [
-                { id: Date.now() - 2000, type: 'income', title: 'Starting Salary', amount: 45000, date: 'Oct 24' },
-                { id: Date.now() - 1000, type: 'expense', title: 'Monthly Grocery', amount: 6500, date: 'Oct 25' }
-            ]);
-
-            loginUser(newUser);
-            showToast('Account created successfully!');
+            localStorage.setItem('active_user', JSON.stringify(currentUser));
+            loadUserData();
+            showDashboard();
         }
 
-        function handleSignin(e) {
-            e.preventDefault();
-            const email = document.getElementById('signin-email').value.trim().toLowerCase();
-            const password = document.getElementById('signin-password').value;
-
-            let users = getUsers();
-            let user = users.find(u => u.email === email && u.password === password);
-
-            // Auto-create demo user if used directly
-            if (!user && email === 'demo@user.com') {
-                user = { name: 'Demo User', email: 'demo@user.com', password: '1234' };
-                users.push(user);
-                saveUsers(users);
-                saveUserEntries(email, [
-                    { id: Date.now() - 3000, type: 'income', title: 'Salary Credit', amount: 65000, date: 'Oct 20' },
-                    { id: Date.now() - 2000, type: 'expense', title: 'House Rent', amount: 15000, date: 'Oct 22' },
-                    { id: Date.now() - 1000, type: 'credit_card', title: 'Amazon Purchase', amount: 4200, date: 'Oct 25' }
-                ]);
-            }
-
-            if (!user) {
-                showToast('Invalid email or password', 'fa-circle-xmark');
-                return;
-            }
-
-            loginUser(user);
-            showToast(`Welcome back, ${user.name}!`);
-        }
-
-        function loginUser(user) {
-            currentUser = user;
-            localStorage.setItem('active_session', JSON.stringify(user));
+        function quickDemoLogin() {
+            currentUser = { name: 'Rahul Sharma', email: 'demo@app.com' };
+            localStorage.setItem('active_user', JSON.stringify(currentUser));
             
-            // UI Switch to App
-            document.getElementById('view-signin').classList.add('hidden');
-            document.getElementById('view-signup').classList.add('hidden');
-            document.getElementById('view-dashboard').classList.remove('hidden');
-            document.getElementById('app-header').classList.remove('hidden');
+            // Populate sample data for demo user
+            let dataKey = 'user_data_' + currentUser.email;
+            if (!localStorage.getItem(dataKey)) {
+                const sampleData = {
+                    transactions: [
+                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, date: '25 Oct' },
+                        { id: 2, type: 'expense', category: 'Food', title: 'Restaurant & Groceries', amount: 4500, date: '26 Oct' },
+                        { id: 3, type: 'expense', category: 'Bills', title: 'Electricity Bill', amount: 2200, date: '27 Oct' }
+                    ],
+                    cards: [
+                        { id: 101, name: 'HDFC Regalia', limit: 150000, used: 24500, stmtDay: 15, dueDay: 5 }
+                    ],
+                    udhar: [
+                        { id: 201, type: 'given', person: 'Vikas (Friend)', amount: 3000, note: 'Weekend Trip', status: 'pending' }
+                    ]
+                };
+                localStorage.setItem(dataKey, JSON.stringify(sampleData));
+            }
 
-            // Render User Header
-            document.getElementById('user-display-name').innerText = user.name;
-            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            loadUserData();
+            showDashboard();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('active_user');
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+        }
+
+        // DATA PERSISTENCE PER USER
+        function loadUserData() {
+            if (!currentUser) return;
+            const key = 'user_data_' + currentUser.email;
+            userData = JSON.parse(localStorage.getItem(key)) || { transactions: [], cards: [], udhar: [] };
+        }
+
+        function saveUserData() {
+            if (!currentUser) return;
+            const key = 'user_data_' + currentUser.email;
+            localStorage.setItem(key, JSON.stringify(userData));
+            renderAllViews();
+        }
+
+        // DASHBOARD VIEW NAVIGATION
+        function showDashboard() {
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+
+            document.getElementById('user-display-name').innerText = currentUser.name;
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('user-avatar').innerText = initials || 'U';
 
-            renderDashboard();
+            renderAllViews();
         }
 
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('active_session');
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('app-header').classList.add('hidden');
-            document.getElementById('view-signin').classList.remove('hidden');
-            showToast('Signed out successfully');
+        function switchAppTab(tabName) {
+            const tabs = ['transactions', 'cards', 'udhar', 'reports'];
+            tabs.forEach(t => {
+                document.getElementById('view-' + t).classList.add('hidden');
+                document.getElementById('nav-' + t).className = 'flex flex-col items-center text-gray-400 hover:text-indigo-600 text-xs font-medium';
+            });
+
+            document.getElementById('view-' + tabName).classList.remove('hidden');
+            document.getElementById('nav-' + tabName).className = 'flex flex-col items-center text-indigo-600 text-xs font-medium';
+
+            if (tabName === 'reports') {
+                renderReports();
+            }
         }
 
-        // Budget Logic & Data Management
-        function handleAddEntry(e) {
+        // RENDER LOGIC
+        function renderAllViews() {
+            renderTransactions();
+            renderCards();
+            renderUdhar();
+        }
+
+        // 1. TRANSACTIONS
+        function addTransaction(e) {
             e.preventDefault();
-            if (!currentUser) return;
+            const type = document.getElementById('tx-type').value;
+            const category = document.getElementById('tx-category').value;
+            const title = document.getElementById('tx-title').value.trim();
+            const amount = parseFloat(document.getElementById('tx-amount').value);
 
-            const type = document.getElementById('entry-type').value;
-            const title = document.getElementById('entry-title').value.trim();
-            const amount = parseFloat(document.getElementById('entry-amount').value);
-
-            if (!title || !amount) return;
-
-            const entries = getUserEntries(currentUser.email);
-            entries.unshift({
+            const newTx = {
                 id: Date.now(),
                 type,
+                category,
                 title,
                 amount,
-                date: new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
-            });
+                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+            };
 
-            saveUserEntries(currentUser.email, entries);
-            document.getElementById('entry-form').reset();
-            renderDashboard();
-            showToast('Entry saved!');
+            userData.transactions.unshift(newTx);
+            saveUserData();
+            e.target.reset();
         }
 
-        function deleteEntry(id) {
-            if (!currentUser) return;
-            let entries = getUserEntries(currentUser.email);
-            entries = entries.filter(item => item.id !== id);
-            saveUserEntries(currentUser.email, entries);
-            renderDashboard();
-            showToast('Entry removed', 'fa-trash');
+        function deleteTransaction(id) {
+            userData.transactions = userData.transactions.filter(t => t.id !== id);
+            saveUserData();
         }
 
-        function clearUserData() {
-            if (!currentUser) return;
-            saveUserEntries(currentUser.email, []);
-            renderDashboard();
-            showToast('All records cleared');
-        }
-
-        function filterEntries(type) {
-            currentFilter = type;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.dataset.filter === type) {
-                    btn.className = 'filter-btn bg-brand-500 text-white px-3 py-1 rounded-full font-medium active-bounce shrink-0';
-                } else {
-                    btn.className = 'filter-btn bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-medium active-bounce shrink-0';
-                }
-            });
-            renderDashboard();
-        }
-
-        function renderDashboard() {
-            if (!currentUser) return;
-
-            const entries = getUserEntries(currentUser.email);
-            
+        function renderTransactions() {
             let totalIncome = 0;
             let totalExpense = 0;
-            let totalLiabilities = 0;
 
-            entries.forEach(e => {
-                if (e.type === 'income') totalIncome += e.amount;
-                else if (e.type === 'expense') totalExpense += e.amount;
-                else if (e.type === 'credit_card' || e.type === 'loan') totalLiabilities += e.amount;
-            });
-
-            document.getElementById('dash-income').innerText = `₹${totalIncome.toLocaleString('en-IN')}`;
-            document.getElementById('dash-expense').innerText = `₹${totalExpense.toLocaleString('en-IN')}`;
-            document.getElementById('dash-balance').innerText = `₹${(totalIncome - totalExpense).toLocaleString('en-IN')}`;
-            document.getElementById('dash-liabilities').innerText = `₹${totalLiabilities.toLocaleString('en-IN')}`;
-
-            // Render list
-            const listEl = document.getElementById('entries-list');
+            const listEl = document.getElementById('tx-list');
             listEl.innerHTML = '';
 
-            const filtered = currentFilter === 'all' ? entries : entries.filter(e => e.type === currentFilter);
-
-            if (filtered.length === 0) {
-                listEl.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">No records found for this view.</p>`;
-                return;
-            }
-
-            filtered.forEach(item => {
-                let badgeClass = 'bg-gray-100 text-gray-700';
-                let label = item.type;
-
-                if (item.type === 'income') { badgeClass = 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'; label = 'Income'; }
-                else if (item.type === 'expense') { badgeClass = 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300'; label = 'Expense'; }
-                else if (item.type === 'credit_card') { badgeClass = 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300'; label = 'Credit Card'; }
-                else if (item.type === 'loan') { badgeClass = 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'; label = 'Loan/EMI'; }
+            userData.transactions.forEach(t => {
+                if (t.type === 'income') totalIncome += t.amount;
+                if (t.type === 'expense') totalExpense += t.amount;
 
                 const row = document.createElement('div');
-                row.className = 'flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700/50';
+                row.className = 'flex justify-between items-center py-2.5';
                 row.innerHTML = `
-                    <div class="flex flex-col">
-                        <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">${item.title}</span>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold ${badgeClass}">${label}</span>
-                            <span class="text-[10px] text-gray-400">${item.date}</span>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${t.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
+                            <i class="fa-solid ${t.type === 'income' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-800">${t.title}</p>
+                            <p class="text-[10px] text-gray-400">${t.category} • ${t.date}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold ${item.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-800 dark:text-gray-200'}">
-                            ${item.type === 'income' ? '+' : '-'}₹${item.amount.toLocaleString('en-IN')}
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${t.type === 'income' ? '+' : '-'}₹${t.amount.toLocaleString('en-IN')}
                         </span>
-                        <button onclick="deleteEntry(${item.id})" class="text-gray-300 hover:text-red-500 text-xs transition">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button onclick="deleteTransaction(${t.id})" class="text-gray-300 hover:text-rose-500 text-xs pl-1"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 listEl.appendChild(row);
             });
+
+            // Card summaries
+            let totalCardBalance = userData.cards.reduce((sum, c) => sum + c.used, 0);
+            let totalNetUdhar = userData.udhar.filter(u => u.status !== 'settled').reduce((acc, u) => u.type === 'taken' ? acc + u.amount : acc - u.amount, 0);
+
+            document.getElementById('dash-income').innerText = '₹' + totalIncome.toLocaleString('en-IN');
+            document.getElementById('dash-expense').innerText = '₹' + totalExpense.toLocaleString('en-IN');
+            document.getElementById('dash-balance').innerText = '₹' + (totalIncome - totalExpense).toLocaleString('en-IN');
+            document.getElementById('dash-liabilities').innerText = '₹' + (totalCardBalance + Math.max(0, totalNetUdhar)).toLocaleString('en-IN');
+            document.getElementById('tx-count').innerText = userData.transactions.length + ' items';
         }
 
-        // Auto restore session on load
-        window.onload = function() {
-            const savedSession = localStorage.getItem('active_session');
-            if (savedSession) {
-                try {
-                    const user = JSON.parse(savedSession);
-                    loginUser(user);
-                } catch(e) {
-                    localStorage.removeItem('active_session');
-                }
+        // 2. CREDIT CARDS MANAGEMENT
+        function toggleCardModal(show) {
+            document.getElementById('card-modal').classList.toggle('hidden', !show);
+        }
+
+        function saveCreditCard(e) {
+            e.preventDefault();
+            const name = document.getElementById('card-name').value;
+            const limit = parseFloat(document.getElementById('card-limit').value);
+            const used = parseFloat(document.getElementById('card-used').value);
+            const stmtDay = parseInt(document.getElementById('card-stmt-day').value);
+            const dueDay = parseInt(document.getElementById('card-due-day').value);
+
+            userData.cards.push({ id: Date.now(), name, limit, used, stmtDay, dueDay });
+            saveUserData();
+            toggleCardModal(false);
+            e.target.reset();
+        }
+
+        function deleteCard(id) {
+            if (confirm("Delete this card?")) {
+                userData.cards = userData.cards.filter(c => c.id !== id);
+                saveUserData();
             }
-        };
+        }
+
+        function renderCards() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            if (userData.cards.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">No credit cards added. Add your first card to track bills and due dates!</p>';
+                return;
+            }
+
+            userData.cards.forEach(c => {
+                const avail = c.limit - c.used;
+                const cardEl = document.createElement('div');
+                cardEl.className = 'bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-4 text-white shadow-md relative overflow-hidden';
+                cardEl.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="text-[10px] font-semibold text-indigo-400 uppercase tracking-wider">Credit Card</span>
+                            <h4 class="text-sm font-bold text-white">${c.name}</h4>
+                        </div>
+                        <button onclick="deleteCard(${c.id})" class="text-gray-500 hover:text-rose-400 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <p class="text-[10px] text-gray-400">Used / Outstanding</p>
+                            <p class="text-base font-bold text-amber-400">₹${c.used.toLocaleString('en-IN')}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400">Available Limit</p>
+                            <p class="text-base font-bold text-emerald-400">₹${avail.toLocaleString('en-IN')}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] bg-slate-800/80 p-2 rounded-xl border border-slate-700">
+                        <span class="text-gray-300"><i class="fa-regular fa-calendar-check text-indigo-400"></i> Stmt: ${c.stmtDay}th of month</span>
+                        <span class="text-rose-300 font-semibold"><i class="fa-solid fa-clock text-rose-400"></i> Due: ${c.dueDay}th of month</span>
+                    </div>
+                `;
+                container.appendChild(cardEl);
+            });
+        }
+
+        // 3. UDHAR & INFORMAL LOANS
+        function toggleUdharModal(show) {
+            document.getElementById('udhar-modal').classList.toggle('hidden', !show);
+        }
+
+        function saveUdharEntry(e) {
+            e.preventDefault();
+            const type = document.getElementById('udhar-type').value;
+            const person = document.getElementById('udhar-person').value.trim();
+            const amount = parseFloat(document.getElementById('udhar-amount').value);
+            const note = document.getElementById('udhar-note').value.trim();
+
+            userData.udhar.push({
+                id: Date.now(),
+                type,
+                person,
+                amount,
+                note,
+                status: 'pending',
+                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+            });
+
+            saveUserData();
+            toggleUdharModal(false);
+            e.target.reset();
+        }
+
+        function settleUdhar(id) {
+            const entry = userData.udhar.find(u => u.id === id);
+            if (entry) {
+                entry.status = 'settled';
+                saveUserData();
+            }
+        }
+
+        function deleteUdhar(id) {
+            userData.udhar = userData.udhar.filter(u => u.id !== id);
+            saveUserData();
+        }
+
+        function renderUdhar() {
+            const list = document.getElementById('udhar-list');
+            list.innerHTML = '';
+
+            let totalGiven = 0;
+            let totalTaken = 0;
+
+            if (userData.udhar.length === 0) {
+                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">No Udhar records found.</p>';
+            }
+
+            userData.udhar.forEach(u => {
+                if (u.status !== 'settled') {
+                    if (u.type === 'given') totalGiven += u.amount;
+                    if (u.type === 'taken') totalTaken += u.amount;
+                }
+
+                const item = document.createElement('div');
+                item.className = `p-3.5 rounded-2xl bg-white border ${u.status === 'settled' ? 'border-gray-100 opacity-50' : 'border-gray-200'} shadow-sm flex justify-between items-center`;
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs ${u.type === 'given' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'}">
+                            <i class="fa-solid ${u.type === 'given' ? 'fa-hand-holding-hand' : 'fa-piggy-bank'}"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-800">${u.person} ${u.status === 'settled' ? '<span class="text-[9px] bg-gray-200 px-1.5 py-0.5 rounded ml-1">Settled</span>' : ''}</p>
+                            <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'} ${u.note ? '• ' + u.note : ''}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-purple-600'}">
+                            ₹${u.amount.toLocaleString('en-IN')}
+                        </span>
+                        ${u.status !== 'settled' ? `<button onclick="settleUdhar(${u.id})" title="Mark as Paid" class="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg font-semibold hover:bg-emerald-100">Settle</button>` : ''}
+                        <button onclick="deleteUdhar(${u.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            document.getElementById('total-udhar-given').innerText = '₹' + totalGiven.toLocaleString('en-IN');
+            document.getElementById('total-udhar-taken').innerText = '₹' + totalTaken.toLocaleString('en-IN');
+        }
+
+        // 4. REPORTS & GRAPHICAL ANALYTICS
+        function renderReports() {
+            // Category Expenses Data
+            const catMap = {};
+            userData.transactions.filter(t => t.type === 'expense').forEach(t => {
+                catMap[t.category] = (catMap[t.category] || 0) + t.amount;
+            });
+
+            const catLabels = Object.keys(catMap);
+            const catValues = Object.values(catMap);
+
+            // Doughnut Chart
+            const ctxCat = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+            categoryChartInstance = new Chart(ctxCat, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels.length ? catLabels : ['No Expenses'],
+                    datasets: [{
+                        data: catValues.length ? catValues : [1],
+                        backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6', '#64748b']
+                    }]
+                },
+                options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+            });
+
+            // Income vs Expense Bar Chart
+            const totalInc = userData.transactions.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const totalExp = userData.transactions.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+
+            const ctxIncExp = document.getElementById('incomeExpenseChart').getContext('2d');
+            if (incomeExpenseChartInstance) incomeExpenseChartInstance.destroy();
+            incomeExpenseChartInstance = new Chart(ctxIncExp, {
+                type: 'bar',
+                data: {
+                    labels: ['Income', 'Expense'],
+                    datasets: [{
+                        label: 'Amount (₹)',
+                        data: [totalInc, totalExp],
+                        backgroundColor: ['#10b981', '#f43f5e'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
     </script>
 </body>
 </html>
