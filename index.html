@@ -20,7 +20,7 @@
                 <i class="fa-solid fa-wallet"></i>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">FinanceManager Pro</h1>
-            <p class="text-xs text-gray-500">Budget, Investments, Cards, Loans & Udhar Tracker</p>
+            <p class="text-xs text-gray-500">Real-Time Financial Accounting & Udhar Manager</p>
         </div>
 
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
@@ -77,7 +77,7 @@
                 <div id="user-avatar" class="w-10 h-10 bg-indigo-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow">RS</div>
                 <div>
                     <h2 id="user-display-name" class="text-sm font-bold text-gray-800 leading-tight">User</h2>
-                    <span class="text-[11px] text-gray-500">Personal Finance Dashboard</span>
+                    <span class="text-[11px] text-gray-500">Real-Time Financial Dashboard</span>
                 </div>
             </div>
             <button onclick="logout()" class="w-9 h-9 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-sm hover:bg-rose-100 transition" title="Logout">
@@ -92,15 +92,15 @@
             <div id="view-transactions" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl text-white shadow">
-                        <p class="text-xs opacity-80">Total Income</p>
+                        <p class="text-xs opacity-80">Total Income / Inflow</p>
                         <p class="text-xl font-bold mt-1" id="dash-income">₹0</p>
                     </div>
                     <div class="bg-gradient-to-br from-rose-500 to-pink-600 p-4 rounded-2xl text-white shadow">
-                        <p class="text-xs opacity-80">Total Expense</p>
+                        <p class="text-xs opacity-80">Total Expense / Outflow</p>
                         <p class="text-xl font-bold mt-1" id="dash-expense">₹0</p>
                     </div>
                     <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl text-white shadow">
-                        <p class="text-xs opacity-80">Net Balance</p>
+                        <p class="text-xs opacity-80">Net Balance (Capital)</p>
                         <p class="text-xl font-bold mt-1" id="dash-balance">₹0</p>
                     </div>
                     <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-2xl text-white shadow">
@@ -112,26 +112,27 @@
                 <!-- Transaction Form -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add New Entry
+                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add New Transaction
                     </h3>
                     <form onsubmit="addTransaction(event)" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[11px] font-semibold text-gray-500">Type</label>
+                                <label class="text-[11px] font-semibold text-gray-500">Transaction Impact</label>
                                 <select id="tx-type" onchange="updateTxSourceOptions()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                                    <option value="expense">🔴 Expense / Payment Out</option>
-                                    <option value="income">🟢 Income / Return In</option>
+                                    <option value="expense">🔴 Expense / Debit (Paisa Gaya)</option>
+                                    <option value="income">🟢 Income / Credit (Paisa Aaya)</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-[11px] font-semibold text-gray-500">Category</label>
                                 <select id="tx-category" onchange="handleCategoryChange()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                                    <option value="Salary">Salary / Business</option>
+                                    <option value="Salary">Salary / Income</option>
                                     <option value="Food">Food & Dining</option>
                                     <option value="Shopping">Shopping & Grocery</option>
-                                    <option value="Bills">Bills & Utilities (Card Bill)</option>
-                                    <option value="EMI">EMI & Bank Loans</option>
-                                    <option value="Udhar">Udhar Repayment (Dena baki)</option>
+                                    <option value="Bills">Bills & Credit Card Bill</option>
+                                    <option value="EMI">Bank Loan EMI</option>
+                                    <option value="Investment">SIP / LIC / Stocks</option>
+                                    <option value="Udhar">Udhar (Borrow / Lend)</option>
                                     <option value="Travel">Travel & Fuel</option>
                                     <option value="Other">Other</option>
                                 </select>
@@ -140,13 +141,13 @@
 
                         <!-- Dynamic Account Auto-Link -->
                         <div id="linked-account-box" class="hidden">
-                            <label class="text-[11px] font-bold text-indigo-600">Select Specific Loan / Card / Udhar to Credit</label>
+                            <label class="text-[11px] font-bold text-indigo-600">Select Specific Account to Settle/Credit</label>
                             <select id="tx-linked-id" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900"></select>
                         </div>
 
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500">Title / Description</label>
-                            <input type="text" id="tx-title" placeholder="e.g., Grocery Shopping, SIP Investment" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                            <input type="text" id="tx-title" placeholder="e.g., Grocery, SIP Investment" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
 
                         <div>
@@ -156,9 +157,9 @@
 
                         <!-- Payment Source / Destination -->
                         <div>
-                            <label class="text-[11px] font-bold text-indigo-600" id="source-dest-label">Kahan se pay hua? (Source)</label>
+                            <label class="text-[11px] font-bold text-indigo-600" id="source-dest-label">Kahan se pay hua? (Payment Source)</label>
                             <select id="tx-source" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900">
-                                <option value="Salary / Bank Account">💵 Salary / Bank Account</option>
+                                <option value="Salary / Bank Account">💵 Bank / Salary Account</option>
                                 <option value="Cash">💶 Cash (Jeb se)</option>
                                 <option value="Credit Card">💳 Credit Card</option>
                             </select>
@@ -171,7 +172,7 @@
                 <!-- History Section -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Transaction History</h3>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">All Transactions History</h3>
                         <span class="text-[10px] text-gray-400" id="tx-count">0 items</span>
                     </div>
                     <div id="tx-list" class="space-y-2 max-h-72 overflow-y-auto divide-y divide-gray-50"></div>
@@ -329,6 +330,13 @@
                         <input type="number" id="inv-current" placeholder="32000" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                     </div>
                 </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Payment Source</label>
+                    <select id="inv-source" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                        <option value="Salary / Bank Account">💵 Bank / Salary Account</option>
+                        <option value="Cash">💶 Cash</option>
+                    </select>
+                </div>
                 <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Investment</button>
             </form>
         </div>
@@ -353,12 +361,7 @@
                     <select id="emi-payment-source" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
                         <option value="salary">💵 Salary / Bank Account</option>
                         <option value="card">💳 Credit Card</option>
-                        <option value="udhar">🤝 Taken Udhar from Relative / Friend</option>
                     </select>
-                </div>
-                <div id="source-detail-box" class="hidden">
-                    <label class="text-[11px] font-bold text-purple-600" id="source-detail-label">Select Specific Account</label>
-                    <select id="emi-source-id" class="w-full mt-1 p-2.5 bg-purple-50 border border-purple-200 rounded-xl text-xs font-semibold text-purple-900"></select>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Confirm EMI Payment</button>
             </form>
@@ -438,10 +441,10 @@
             </div>
             <form onsubmit="saveUdharEntry(event)" class="space-y-3">
                 <div>
-                    <label class="text-[11px] font-semibold text-gray-500">Type</label>
+                    <label class="text-[11px] font-semibold text-gray-500">Udhar Type</label>
                     <select id="udhar-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                        <option value="given">🤝 Given (Lena hai)</option>
-                        <option value="taken">🏦 Taken (Dena hai)</option>
+                        <option value="given">🤝 Given (Maine Diya - Paisa Jeb se gaya, Lena Baki)</option>
+                        <option value="taken">🏦 Taken (Maine Liya - Paisa Aaya, Dena Baki)</option>
                     </select>
                 </div>
                 <div>
@@ -453,7 +456,14 @@
                     <input type="number" id="udhar-amount" placeholder="5000" min="1" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
-                    <label class="text-[11px] font-semibold text-gray-500">Note</label>
+                    <label class="text-[11px] font-semibold text-gray-500">Payment Source / Wallet</label>
+                    <select id="udhar-source" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                        <option value="Salary / Bank Account">💵 Bank / Salary Account</option>
+                        <option value="Cash">💶 Cash (Jeb se)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Note / Reason</label>
                     <input type="text" id="udhar-note" placeholder="Reason..." class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Record</button>
@@ -461,7 +471,7 @@
         </div>
     </div>
 
-    <!-- COMPLETE JAVASCRIPT LOGIC -->
+    <!-- COMPLETE ACCOUNTING & DATA LOGIC -->
     <script>
         let currentUser = null;
         let userData = { transactions: [], investments: [], loans: [], cards: [], udhar: [] };
@@ -535,7 +545,8 @@
                 localStorage.setItem(dataKey, JSON.stringify({
                     transactions: [
                         { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, source: 'Salary / Bank Account', date: '25 Oct' },
-                        { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, source: 'Cash', date: '26 Oct' }
+                        { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, source: 'Cash', date: '26 Oct' },
+                        { id: 3, type: 'expense', category: 'Udhar', title: 'Udhar Given to Vikas (Trip Share)', amount: 2000, source: 'Cash', date: '27 Oct' }
                     ],
                     investments: [
                         { id: 401, type: 'sip', name: 'Nippon Small Cap Fund', invested: 30000, current: 38500 },
@@ -548,8 +559,8 @@
                         { id: 101, name: 'HDFC Regalia', limit: 100000, used: 12000, stmtDay: 15, dueDay: 5 }
                     ],
                     udhar: [
-                        { id: 201, type: 'given', person: 'Vikas (Friend)', amount: 2000, note: 'Trip Share', status: 'pending' },
-                        { id: 202, type: 'taken', person: 'Ramesh Uncle', amount: 5000, note: 'Urgent', status: 'pending' }
+                        { id: 201, type: 'given', person: 'Vikas', amount: 2000, note: 'Trip Share', status: 'due', source: 'Cash' },
+                        { id: 202, type: 'taken', person: 'Ramesh Uncle', amount: 5000, note: 'Urgent Help', status: 'due', source: 'Salary / Bank Account' }
                     ]
                 }));
             }
@@ -624,17 +635,17 @@
             select.innerHTML = '';
 
             if (type === 'expense') {
-                label.innerText = 'Kahan se pay hua? (Source)';
+                label.innerText = 'Kahan se pay hua? (Payment Source)';
                 select.innerHTML = `
-                    <option value="Salary / Bank Account">💵 Salary / Bank Account</option>
+                    <option value="Salary / Bank Account">💵 Bank / Salary Account</option>
                     <option value="Cash">💶 Cash (Jeb se)</option>
                     <option value="Credit Card">💳 Credit Card</option>
                 `;
             } else {
-                label.innerText = 'Kisme joda gaya? (Destination)';
+                label.innerText = 'Kisme joda gaya? (Destination Account)';
                 select.innerHTML = `
-                    <option value="Salary / Bank Account">💵 Salary / Bank Account mein</option>
-                    <option value="Cash">💶 Cash (Pocket) mein</option>
+                    <option value="Salary / Bank Account">💵 Bank / Salary Account mein</option>
+                    <option value="Cash">💶 Cash (Jeb) mein</option>
                 `;
             }
         }
@@ -662,14 +673,23 @@
                     });
                     return;
                 } else if (category === 'Udhar') {
-                    const pendingTaken = userData.udhar.filter(u => u.type === 'taken' && u.status !== 'settled');
+                    const pendingTaken = userData.udhar.filter(u => u.type === 'taken' && u.status === 'due');
                     if (pendingTaken.length) {
                         box.classList.remove('hidden');
                         pendingTaken.forEach(u => {
-                            select.innerHTML += `<option value="udhar_${u.id}">🤝 Udhar: ${u.person} (Dena: ₹${u.amount})</option>`;
+                            select.innerHTML += `<option value="udhar_${u.id}">🤝 Repay Udhar: ${u.person} (Due: ₹${u.amount})</option>`;
                         });
                         return;
                     }
+                }
+            } else if (type === 'income' && category === 'Udhar') {
+                const pendingGiven = userData.udhar.filter(u => u.type === 'given' && u.status === 'due');
+                if (pendingGiven.length) {
+                    box.classList.remove('hidden');
+                    pendingGiven.forEach(u => {
+                        select.innerHTML += `<option value="udhar_${u.id}">🤝 Udhar Recovery: ${u.person} (Pending: ₹${u.amount})</option>`;
+                    });
+                    return;
                 }
             }
             box.classList.add('hidden');
@@ -684,15 +704,14 @@
             const source = document.getElementById('tx-source').value;
             const linkedVal = document.getElementById('tx-linked-id').value;
 
-            // Auto credit linked accounts
-            if (type === 'expense' && linkedVal && !document.getElementById('linked-account-box').classList.contains('hidden')) {
+            if (linkedVal && !document.getElementById('linked-account-box').classList.contains('hidden')) {
                 const [targetType, idStr] = linkedVal.split('_');
                 const targetId = parseInt(idStr);
 
-                if (targetType === 'loan') {
+                if (targetType === 'loan' && type === 'expense') {
                     let loan = userData.loans.find(l => l.id === targetId);
                     if (loan) loan.remaining = Math.max(0, loan.remaining - amount);
-                } else if (targetType === 'card') {
+                } else if (targetType === 'card' && type === 'expense') {
                     let card = userData.cards.find(c => c.id === targetId);
                     if (card) card.used = Math.max(0, card.used - amount);
                 } else if (targetType === 'udhar') {
@@ -713,6 +732,7 @@
                 source,
                 date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
             });
+
             saveUserData();
             e.target.reset();
             updateTxSourceOptions();
@@ -756,9 +776,9 @@
 
             let totalLoansRemaining = userData.loans.reduce((sum, l) => sum + (l.remaining || 0), 0);
             let cardUsed = userData.cards.reduce((sum, c) => sum + (c.used || 0), 0);
-            let netUdhar = userData.udhar.filter(u => u.status !== 'settled').reduce((acc, u) => u.type === 'taken' ? acc + u.amount : acc - u.amount, 0);
+            let netUdharTaken = userData.udhar.filter(u => u.type === 'taken' && u.status === 'due').reduce((acc, u) => acc + u.amount, 0);
 
-            let totalLiabilities = totalLoansRemaining + cardUsed + Math.max(0, netUdhar);
+            let totalLiabilities = totalLoansRemaining + cardUsed + netUdharTaken;
 
             document.getElementById('dash-income').innerText = '₹' + inc.toLocaleString('en-IN');
             document.getElementById('dash-expense').innerText = '₹' + exp.toLocaleString('en-IN');
@@ -767,21 +787,41 @@
             document.getElementById('tx-count').innerText = userData.transactions.length + ' items';
         }
 
-        // INVESTMENTS LOGIC
+        // INVESTMENTS LOGIC WITH EXACT NAME DISPLAY ON HOME
         function toggleInvestModal(show) { document.getElementById('invest-modal').classList.toggle('hidden', !show); }
+        
         function saveInvestment(e) {
             e.preventDefault();
+            const type = document.getElementById('inv-type').value;
+            const name = document.getElementById('inv-name').value.trim();
+            const invested = parseFloat(document.getElementById('inv-invested').value);
+            const source = document.getElementById('inv-source').value;
+            const invTypeTitle = type === 'sip' ? 'SIP / Mutual Fund' : (type === 'lic' ? 'LIC Policy' : 'Stocks');
+
             userData.investments.push({
                 id: Date.now(),
-                type: document.getElementById('inv-type').value,
-                name: document.getElementById('inv-name').value,
-                invested: parseFloat(document.getElementById('inv-invested').value),
+                type: type,
+                name: name,
+                invested: invested,
                 current: parseFloat(document.getElementById('inv-current').value)
             });
+
+            // Clear explicit description showing Investment Name & Type on Home Page
+            userData.transactions.unshift({
+                id: Date.now(),
+                type: 'expense',
+                category: 'Investment',
+                title: `Investment [${invTypeTitle}]: ${name}`,
+                amount: invested,
+                source: source,
+                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+            });
+
             saveUserData();
             toggleInvestModal(false);
             e.target.reset();
         }
+
         function deleteInvestment(id) { userData.investments = userData.investments.filter(i => i.id !== id); saveUserData(); }
 
         function renderInvestments() {
@@ -843,31 +883,6 @@
             document.getElementById('emi-target-loan-id').value = loan.id;
             document.getElementById('emi-modal-loan-title').innerText = 'Paying EMI for: ' + loan.name;
             document.getElementById('emi-pay-amount').value = Math.min(loan.emi, loan.remaining);
-
-            const sourceSelect = document.getElementById('emi-payment-source');
-            sourceSelect.onchange = function() {
-                const val = sourceSelect.value;
-                const detailBox = document.getElementById('source-detail-box');
-                const detailSelect = document.getElementById('emi-source-id');
-                detailSelect.innerHTML = '';
-
-                if (val === 'card' && userData.cards.length) {
-                    detailBox.classList.remove('hidden');
-                    userData.cards.forEach(c => {
-                        detailSelect.innerHTML += `<option value="${c.id}">${c.name} (Avail Limit: ₹${c.limit - c.used})</option>`;
-                    });
-                } else if (val === 'udhar') {
-                    detailBox.classList.remove('hidden');
-                    detailSelect.innerHTML = `<option value="new_relative">🤝 Add New Person / Friend Udhar</option>`;
-                    userData.udhar.filter(u => u.type === 'taken').forEach(u => {
-                        detailSelect.innerHTML += `<option value="${u.id}">${u.person}</option>`;
-                    });
-                } else {
-                    detailBox.classList.add('hidden');
-                }
-            };
-
-            sourceSelect.onchange();
             toggleEmiPayModal(true);
         }
 
@@ -876,54 +891,27 @@
             const loanId = parseInt(document.getElementById('emi-target-loan-id').value);
             const amount = parseFloat(document.getElementById('emi-pay-amount').value);
             const source = document.getElementById('emi-payment-source').value;
-            const sourceId = document.getElementById('emi-source-id').value;
 
             let loan = userData.loans.find(l => l.id === loanId);
             if (!loan) return;
 
             loan.remaining = Math.max(0, loan.remaining - amount);
 
-            if (source === 'salary') {
-                userData.transactions.unshift({
-                    id: Date.now(),
-                    type: 'expense',
-                    category: 'EMI',
-                    title: loan.name + ' EMI Paid',
-                    amount,
-                    source: 'Salary / Bank Account',
-                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-                });
-            } else if (source === 'card') {
-                let card = userData.cards.find(c => c.id === parseInt(sourceId));
-                if (card) card.used += amount;
+            let sourceText = source === 'salary' ? 'Salary / Bank Account' : 'Credit Card';
 
-                userData.transactions.unshift({
-                    id: Date.now(),
-                    type: 'expense',
-                    category: 'EMI',
-                    title: loan.name + ' EMI via Card',
-                    amount,
-                    source: 'Credit Card (' + (card ? card.name : '') + ')',
-                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-                });
-            } else if (source === 'udhar') {
-                if (sourceId === 'new_relative') {
-                    let personName = prompt("Enter Person / Relative Name who paid this EMI:");
-                    if (personName) {
-                        userData.udhar.push({
-                            id: Date.now(),
-                            type: 'taken',
-                            person: personName,
-                            amount,
-                            note: 'EMI for ' + loan.name,
-                            status: 'pending'
-                        });
-                    }
-                } else {
-                    let u = userData.udhar.find(x => x.id === parseInt(sourceId));
-                    if (u) u.amount += amount;
-                }
+            if (source === 'card' && userData.cards.length) {
+                userData.cards[0].used += amount;
             }
+
+            userData.transactions.unshift({
+                id: Date.now(),
+                type: 'expense',
+                category: 'EMI',
+                title: loan.name + ' EMI Paid',
+                amount: amount,
+                source: sourceText,
+                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+            });
 
             saveUserData();
             toggleEmiPayModal(false);
@@ -1030,28 +1018,91 @@
             });
         }
 
-        // UDHAR LOGIC
+        // UDHAR LOGIC WITH EXPLICIT PERSON NAME ON HOME PAGE
         function toggleUdharModal(show) { document.getElementById('udhar-modal').classList.toggle('hidden', !show); }
+        
         function saveUdharEntry(e) {
             e.preventDefault();
+            const type = document.getElementById('udhar-type').value;
+            const person = document.getElementById('udhar-person').value.trim();
+            const amount = parseFloat(document.getElementById('udhar-amount').value);
+            const source = document.getElementById('udhar-source').value;
+            const note = document.getElementById('udhar-note').value.trim();
+
             userData.udhar.push({
                 id: Date.now(),
-                type: document.getElementById('udhar-type').value,
-                person: document.getElementById('udhar-person').value,
-                amount: parseFloat(document.getElementById('udhar-amount').value),
-                note: document.getElementById('udhar-note').value,
-                status: 'pending'
+                type,
+                person,
+                amount,
+                note,
+                status: 'due',
+                source
             });
+
+            // Detailed Title showing Person Name and Note for Home Page History
+            let detailNote = note ? ` (${note})` : '';
+            if (type === 'given') {
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'expense',
+                    category: 'Udhar',
+                    title: `Udhar Given: ${person}${detailNote}`,
+                    amount: amount,
+                    source: source,
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+            } else {
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'income',
+                    category: 'Udhar',
+                    title: `Udhar Taken: ${person}${detailNote}`,
+                    amount: amount,
+                    source: source,
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+            }
+
             saveUserData();
             toggleUdharModal(false);
             e.target.reset();
         }
+
         function settleUdhar(id) {
             let u = userData.udhar.find(x => x.id === id);
-            if (u) u.status = 'settled';
+            if (!u || u.status === 'settled') return;
+
+            u.status = 'settled';
+
+            if (u.type === 'given') {
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'income',
+                    category: 'Udhar',
+                    title: `Udhar Recovered from ${u.person}`,
+                    amount: u.amount,
+                    source: u.source || 'Salary / Bank Account',
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+            } else {
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'expense',
+                    category: 'Udhar',
+                    title: `Udhar Repaid to ${u.person}`,
+                    amount: u.amount,
+                    source: u.source || 'Salary / Bank Account',
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+            }
+
             saveUserData();
         }
-        function deleteUdhar(id) { userData.udhar = userData.udhar.filter(u => u.id !== id); saveUserData(); }
+
+        function deleteUdhar(id) { 
+            userData.udhar = userData.udhar.filter(u => u.id !== id); 
+            saveUserData(); 
+        }
 
         function renderUdhar() {
             const list = document.getElementById('udhar-list');
@@ -1059,25 +1110,30 @@
             let given = 0, taken = 0;
 
             if (!userData.udhar.length) {
-                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No udhar records.</p>';
+                list.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No udhar records found.</p>';
             }
 
             userData.udhar.forEach(u => {
-                if (u.status !== 'settled') {
+                if (u.status === 'due') {
                     if (u.type === 'given') given += u.amount;
                     if (u.type === 'taken') taken += u.amount;
                 }
 
                 const item = document.createElement('div');
-                item.className = 'p-3 rounded-2xl bg-white border border-gray-100 shadow-sm flex justify-between items-center';
+                item.className = `p-3.5 rounded-2xl bg-white border ${u.status === 'settled' ? 'border-gray-100 opacity-60' : 'border-gray-200'} shadow-sm flex justify-between items-center`;
                 item.innerHTML = `
                     <div>
-                        <p class="text-xs font-bold text-gray-800">${u.person} ${u.status === 'settled' ? '<span class="text-[9px] bg-gray-200 px-1 rounded">Settled</span>' : ''}</p>
+                        <div class="flex items-center gap-1.5">
+                            <p class="text-xs font-bold text-gray-800">${u.person}</p>
+                            <span class="text-[9px] px-2 py-0.5 rounded font-semibold ${u.status === 'settled' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                                ${u.status === 'settled' ? '✓ Settled' : '⏳ Due'}
+                            </span>
+                        </div>
                         <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'} ${u.note ? '• ' + u.note : ''}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-rose-600'}">₹${u.amount.toLocaleString('en-IN')}</span>
-                        ${u.status !== 'settled' ? `<button onclick="settleUdhar(${u.id})" class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded">Settle</button>` : ''}
+                        ${u.status === 'due' ? `<button onclick="settleUdhar(${u.id})" class="text-[10px] text-emerald-600 font-bold bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 shadow-sm">Settle Now</button>` : ''}
                         <button onclick="deleteUdhar(${u.id})" class="text-gray-300 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
