@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Finance, Loans, Investments & Udhar Manager</title>
+    <title>Smart Budget, Investments, Loans & Udhar Manager</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -20,13 +20,13 @@
                 <i class="fa-solid fa-wallet"></i>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">FinanceManager Pro</h1>
-            <p class="text-xs text-gray-500">Budget, Investments, Cards, Loans & Udhar</p>
+            <p class="text-xs text-gray-500">Budget, Investments, Cards, Loans & Udhar Tracker</p>
         </div>
 
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
             <div class="flex border-b border-gray-100 mb-6">
-                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600">Sign In</button>
-                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400">Sign Up</button>
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600 transition">Sign In</button>
+                <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-center font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition">Sign Up</button>
             </div>
 
             <form id="login-form" onsubmit="handleAuth(event, 'login')" class="space-y-4">
@@ -38,9 +38,15 @@
                     <label class="text-xs font-semibold text-gray-600">Password</label>
                     <input type="password" id="login-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md">Sign In</button>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md transition">Sign In</button>
                 
-                <button type="button" onclick="quickDemoLogin()" class="w-full py-3 bg-emerald-50 text-emerald-700 font-semibold rounded-xl text-xs border border-emerald-200 mt-2 flex items-center justify-center gap-2">
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink mx-4 text-xs text-gray-400">or</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <button type="button" onclick="quickDemoLogin()" class="w-full py-3 bg-emerald-50 text-emerald-700 font-semibold rounded-xl text-xs border border-emerald-200 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-bolt"></i> Quick Demo Login
                 </button>
             </form>
@@ -48,22 +54,22 @@
             <form id="signup-form" onsubmit="handleAuth(event, 'signup')" class="space-y-4 hidden">
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Full Name</label>
-                    <input type="text" id="signup-name" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none" placeholder="Rahul Sharma">
+                    <input type="text" id="signup-name" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Rahul Sharma">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Email Address</label>
-                    <input type="email" id="signup-email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none" placeholder="you@example.com">
+                    <input type="email" id="signup-email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="you@example.com">
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-gray-600">Password</label>
-                    <input type="password" id="signup-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none" placeholder="••••••••">
+                    <input type="password" id="signup-password" required class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full py-3.5 bg-indigo-600 text-white font-semibold rounded-xl text-sm shadow-md">Create Account</button>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow-md transition">Create Account</button>
             </form>
         </div>
     </div>
 
-    <!-- MAIN APP SCREEN -->
+    <!-- MAIN DASHBOARD APP CONTAINER -->
     <div id="app-container" class="max-w-md mx-auto hidden min-h-screen flex flex-col">
         <!-- Header -->
         <header class="bg-white border-b border-gray-200 p-4 sticky top-0 z-30 flex justify-between items-center shadow-sm">
@@ -71,10 +77,10 @@
                 <div id="user-avatar" class="w-10 h-10 bg-indigo-600 text-white font-bold rounded-full flex items-center justify-center text-sm shadow">RS</div>
                 <div>
                     <h2 id="user-display-name" class="text-sm font-bold text-gray-800 leading-tight">User</h2>
-                    <span class="text-[11px] text-gray-500">Personal Dashboard</span>
+                    <span class="text-[11px] text-gray-500">Personal Finance Dashboard</span>
                 </div>
             </div>
-            <button onclick="logout()" class="w-9 h-9 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-sm" title="Logout">
+            <button onclick="logout()" class="w-9 h-9 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-sm hover:bg-rose-100 transition" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
             </button>
         </header>
@@ -82,7 +88,7 @@
         <!-- Main Body -->
         <main class="flex-1 p-4 space-y-4 overflow-y-auto">
 
-            <!-- TAB 1: HOME TRANSACTIONS -->
+            <!-- TAB 1: TRANSACTIONS & OVERVIEW -->
             <div id="view-transactions" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl text-white shadow">
@@ -103,23 +109,24 @@
                     </div>
                 </div>
 
+                <!-- Transaction Form -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add Transaction
+                        <i class="fa-solid fa-plus-circle text-indigo-600"></i> Add New Entry
                     </h3>
                     <form onsubmit="addTransaction(event)" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="text-[11px] font-semibold text-gray-500">Type</label>
-                                <select id="tx-type" onchange="handleCategoryChange()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                                    <option value="income">🟢 Income</option>
-                                    <option value="expense">🔴 Expense</option>
+                                <select id="tx-type" onchange="updateTxSourceOptions()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                                    <option value="expense">🔴 Expense / Payment Out</option>
+                                    <option value="income">🟢 Income / Return In</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-[11px] font-semibold text-gray-500">Category</label>
                                 <select id="tx-category" onchange="handleCategoryChange()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                                    <option value="Salary">Salary / Income</option>
+                                    <option value="Salary">Salary / Business</option>
                                     <option value="Food">Food & Dining</option>
                                     <option value="Shopping">Shopping & Grocery</option>
                                     <option value="Bills">Bills & Utilities (Card Bill)</option>
@@ -131,33 +138,47 @@
                             </div>
                         </div>
 
-                        <!-- Dynamic Link Selector -->
+                        <!-- Dynamic Account Auto-Link -->
                         <div id="linked-account-box" class="hidden">
                             <label class="text-[11px] font-bold text-indigo-600">Select Specific Loan / Card / Udhar to Credit</label>
                             <select id="tx-linked-id" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900"></select>
                         </div>
 
                         <div>
-                            <label class="text-[11px] font-semibold text-gray-500">Title</label>
-                            <input type="text" id="tx-title" placeholder="e.g., Grocery, Car Loan EMI" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                            <label class="text-[11px] font-semibold text-gray-500">Title / Description</label>
+                            <input type="text" id="tx-title" placeholder="e.g., Grocery Shopping, SIP Investment" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
+
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500">Amount (₹)</label>
                             <input type="number" id="tx-amount" min="1" step="any" placeholder="0.00" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                         </div>
-                        <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Save Transaction</button>
+
+                        <!-- Payment Source / Destination -->
+                        <div>
+                            <label class="text-[11px] font-bold text-indigo-600" id="source-dest-label">Kahan se pay hua? (Source)</label>
+                            <select id="tx-source" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900">
+                                <option value="Salary / Bank Account">💵 Salary / Bank Account</option>
+                                <option value="Cash">💶 Cash (Jeb se)</option>
+                                <option value="Credit Card">💳 Credit Card</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow transition">Save Transaction</button>
                     </form>
                 </div>
 
+                <!-- History Section -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-3">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Recent Transactions</h3>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Transaction History</h3>
+                        <span class="text-[10px] text-gray-400" id="tx-count">0 items</span>
                     </div>
                     <div id="tx-list" class="space-y-2 max-h-72 overflow-y-auto divide-y divide-gray-50"></div>
                 </div>
             </div>
 
-            <!-- TAB 2: INVESTMENTS (SIP, LIC, STOCKS) -->
+            <!-- TAB 2: INVESTMENTS PORTFOLIO -->
             <div id="view-investments" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">My Investments Portfolio</h3>
@@ -166,19 +187,17 @@
                     </button>
                 </div>
 
-                <!-- Portfolio Summary Cards -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl">
                         <p class="text-[11px] text-emerald-700 font-semibold">Total Invested</p>
                         <p class="text-lg font-bold text-emerald-900" id="total-invested-amt">₹0</p>
                     </div>
                     <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-2xl">
-                        <p class="text-[11px] text-indigo-700 font-semibold">Portfolio Value</p>
+                        <p class="text-[11px] text-indigo-700 font-semibold">Current Portfolio Value</p>
                         <p class="text-lg font-bold text-indigo-900" id="total-portfolio-val">₹0</p>
                     </div>
                 </div>
 
-                <!-- Investments List -->
                 <div id="investments-container" class="space-y-3"></div>
             </div>
 
@@ -210,7 +229,7 @@
                 <div id="cards-container" class="space-y-3"></div>
             </div>
 
-            <!-- TAB 5: UDHAR & LOANS -->
+            <!-- TAB 5: UDHAR & INFORMAL LOANS -->
             <div id="view-udhar" class="space-y-4 hidden">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-gray-800">Friends & Relatives Udhar</h3>
@@ -233,9 +252,9 @@
                 <div id="udhar-list" class="space-y-2"></div>
             </div>
 
-            <!-- TAB 6: REPORTS -->
+            <!-- TAB 6: REPORTS & GRAPHICAL ANALYTICS -->
             <div id="view-reports" class="space-y-4 hidden">
-                <h3 class="text-sm font-bold text-gray-800">Financial Insights</h3>
+                <h3 class="text-sm font-bold text-gray-800">Financial Reports & Insights</h3>
 
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Expense Breakdown</h4>
@@ -280,7 +299,7 @@
         </nav>
     </div>
 
-    <!-- MODAL: ADD INVESTMENT (SIP, LIC, STOCKS) -->
+    <!-- MODAL: ADD INVESTMENT -->
     <div id="invest-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center">
@@ -298,7 +317,7 @@
                 </div>
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Name / Title</label>
-                    <input type="text" id="inv-name" placeholder="e.g., Nippon India Small Cap / Tata Motors" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    <input type="text" id="inv-name" placeholder="e.g., Nippon India Small Cap Fund" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -332,7 +351,7 @@
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Deduct Payment From</label>
                     <select id="emi-payment-source" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                        <option value="salary">💵 Salary / Cash / Bank Balance</option>
+                        <option value="salary">💵 Salary / Bank Account</option>
                         <option value="card">💳 Credit Card</option>
                         <option value="udhar">🤝 Taken Udhar from Relative / Friend</option>
                     </select>
@@ -356,7 +375,7 @@
             <form onsubmit="saveLoan(event)" class="space-y-3">
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Loan Title / Provider</label>
-                    <input type="text" id="loan-name" placeholder="e.g., Car Loan" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                    <input type="text" id="loan-name" placeholder="e.g., Car Loan, SBI Personal Loan" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 </div>
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Total Loan Amount (₹)</label>
@@ -421,8 +440,8 @@
                 <div>
                     <label class="text-[11px] font-semibold text-gray-500">Type</label>
                     <select id="udhar-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
-                        <option value="given">🤝 Given (Lena baki hai)</option>
-                        <option value="taken">🏦 Taken (Dena baki hai)</option>
+                        <option value="given">🤝 Given (Lena hai)</option>
+                        <option value="taken">🏦 Taken (Dena hai)</option>
                     </select>
                 </div>
                 <div>
@@ -442,7 +461,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- COMPLETE JAVASCRIPT LOGIC -->
     <script>
         let currentUser = null;
         let userData = { transactions: [], investments: [], loans: [], cards: [], udhar: [] };
@@ -456,9 +475,7 @@
                     currentUser = JSON.parse(activeUser);
                     loadUserData();
                     showDashboard();
-                } catch(e) {
-                    logout();
-                }
+                } catch(e) { logout(); }
             }
         };
 
@@ -517,23 +534,22 @@
             if (!localStorage.getItem(dataKey)) {
                 localStorage.setItem(dataKey, JSON.stringify({
                     transactions: [
-                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, date: '25 Oct' },
-                        { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, date: '26 Oct' }
+                        { id: 1, type: 'income', category: 'Salary', title: 'Monthly Salary', amount: 65000, source: 'Salary / Bank Account', date: '25 Oct' },
+                        { id: 2, type: 'expense', category: 'Food', title: 'Groceries', amount: 3500, source: 'Cash', date: '26 Oct' }
                     ],
                     investments: [
                         { id: 401, type: 'sip', name: 'Nippon Small Cap Fund', invested: 30000, current: 38500 },
-                        { id: 402, type: 'lic', name: 'LIC Jeevan Labh', invested: 45000, current: 45000 },
-                        { id: 403, type: 'stock', name: 'Tata Motors', invested: 20000, current: 24200 }
+                        { id: 402, type: 'lic', name: 'LIC Jeevan Labh Policy', invested: 45000, current: 45000 }
                     ],
                     loans: [
                         { id: 301, name: 'HDFC Car Loan', total: 400000, remaining: 250000, emi: 9500 }
                     ],
                     cards: [
-                        { id: 101, name: 'HDFC Card', limit: 100000, used: 12000, stmtDay: 15, dueDay: 5 }
+                        { id: 101, name: 'HDFC Regalia', limit: 100000, used: 12000, stmtDay: 15, dueDay: 5 }
                     ],
                     udhar: [
-                        { id: 201, type: 'given', person: 'Vikas', amount: 2000, note: 'Trip', status: 'pending' },
-                        { id: 202, type: 'taken', person: 'Ramesh Uncle', amount: 5000, note: 'Urgent Help', status: 'pending' }
+                        { id: 201, type: 'given', person: 'Vikas (Friend)', amount: 2000, note: 'Trip Share', status: 'pending' },
+                        { id: 202, type: 'taken', person: 'Ramesh Uncle', amount: 5000, note: 'Urgent', status: 'pending' }
                     ]
                 }));
             }
@@ -600,7 +616,30 @@
             renderUdhar();
         }
 
-        // DYNAMIC EXPENSE CATEGORY AUTO-LINKING
+        // SOURCE & DESTINATION DYNAMIC DROPDOWN
+        function updateTxSourceOptions() {
+            const type = document.getElementById('tx-type').value;
+            const label = document.getElementById('source-dest-label');
+            const select = document.getElementById('tx-source');
+            select.innerHTML = '';
+
+            if (type === 'expense') {
+                label.innerText = 'Kahan se pay hua? (Source)';
+                select.innerHTML = `
+                    <option value="Salary / Bank Account">💵 Salary / Bank Account</option>
+                    <option value="Cash">💶 Cash (Jeb se)</option>
+                    <option value="Credit Card">💳 Credit Card</option>
+                `;
+            } else {
+                label.innerText = 'Kisme joda gaya? (Destination)';
+                select.innerHTML = `
+                    <option value="Salary / Bank Account">💵 Salary / Bank Account mein</option>
+                    <option value="Cash">💶 Cash (Pocket) mein</option>
+                `;
+            }
+        }
+
+        // DYNAMIC CATEGORY LINKING
         function handleCategoryChange() {
             const type = document.getElementById('tx-type').value;
             const category = document.getElementById('tx-category').value;
@@ -642,8 +681,10 @@
             const category = document.getElementById('tx-category').value;
             const title = document.getElementById('tx-title').value.trim();
             const amount = parseFloat(document.getElementById('tx-amount').value);
+            const source = document.getElementById('tx-source').value;
             const linkedVal = document.getElementById('tx-linked-id').value;
 
+            // Auto credit linked accounts
             if (type === 'expense' && linkedVal && !document.getElementById('linked-account-box').classList.contains('hidden')) {
                 const [targetType, idStr] = linkedVal.split('_');
                 const targetId = parseInt(idStr);
@@ -669,10 +710,12 @@
                 category,
                 title,
                 amount,
+                source,
                 date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
             });
             saveUserData();
             e.target.reset();
+            updateTxSourceOptions();
             document.getElementById('linked-account-box').classList.add('hidden');
         }
 
@@ -686,6 +729,10 @@
             const listEl = document.getElementById('tx-list');
             listEl.innerHTML = '';
 
+            if (!userData.transactions.length) {
+                listEl.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No transactions recorded.</p>';
+            }
+
             userData.transactions.forEach(t => {
                 if (t.type === 'income') inc += t.amount;
                 if (t.type === 'expense') exp += t.amount;
@@ -695,7 +742,7 @@
                 row.innerHTML = `
                     <div>
                         <p class="text-xs font-semibold text-gray-800">${t.title}</p>
-                        <p class="text-[10px] text-gray-400">${t.category} • ${t.date}</p>
+                        <p class="text-[10px] text-gray-400">${t.category} • Via: <span class="text-indigo-600 font-medium">${t.source || 'Bank'}</span> • ${t.date}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
@@ -717,9 +764,10 @@
             document.getElementById('dash-expense').innerText = '₹' + exp.toLocaleString('en-IN');
             document.getElementById('dash-balance').innerText = '₹' + (inc - exp).toLocaleString('en-IN');
             document.getElementById('dash-liabilities').innerText = '₹' + totalLiabilities.toLocaleString('en-IN');
+            document.getElementById('tx-count').innerText = userData.transactions.length + ' items';
         }
 
-        // INVESTMENTS LOGIC (SIP, LIC, STOCKS)
+        // INVESTMENTS LOGIC
         function toggleInvestModal(show) { document.getElementById('invest-modal').classList.toggle('hidden', !show); }
         function saveInvestment(e) {
             e.preventDefault();
@@ -784,7 +832,7 @@
             document.getElementById('total-portfolio-val').innerText = '₹' + totalCur.toLocaleString('en-IN');
         }
 
-        // BANK LOANS LOGIC & EMI PAYMENT MODAL
+        // BANK LOANS LOGIC
         function toggleLoanModal(show) { document.getElementById('loan-modal').classList.toggle('hidden', !show); }
         function toggleEmiPayModal(show) { document.getElementById('emi-pay-modal').classList.toggle('hidden', !show); }
 
@@ -840,8 +888,9 @@
                     id: Date.now(),
                     type: 'expense',
                     category: 'EMI',
-                    title: loan.name + ' EMI (Cash/Salary)',
+                    title: loan.name + ' EMI Paid',
                     amount,
+                    source: 'Salary / Bank Account',
                     date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
                 });
             } else if (source === 'card') {
@@ -852,8 +901,9 @@
                     id: Date.now(),
                     type: 'expense',
                     category: 'EMI',
-                    title: loan.name + ' EMI via Card (' + (card ? card.name : '') + ')',
+                    title: loan.name + ' EMI via Card',
                     amount,
+                    source: 'Credit Card (' + (card ? card.name : '') + ')',
                     date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
                 });
             } else if (source === 'udhar') {
@@ -1023,7 +1073,7 @@
                 item.innerHTML = `
                     <div>
                         <p class="text-xs font-bold text-gray-800">${u.person} ${u.status === 'settled' ? '<span class="text-[9px] bg-gray-200 px-1 rounded">Settled</span>' : ''}</p>
-                        <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'}</p>
+                        <p class="text-[10px] text-gray-400">${u.type === 'given' ? 'Given (Lena hai)' : 'Taken (Dena hai)'} ${u.note ? '• ' + u.note : ''}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold ${u.type === 'given' ? 'text-amber-600' : 'text-rose-600'}">₹${u.amount.toLocaleString('en-IN')}</span>
