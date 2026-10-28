@@ -111,24 +111,34 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="text-[11px] font-semibold text-gray-500">Type</label>
-                                <select id="tx-type" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                                <select id="tx-type" onchange="handleCategoryChange()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
                                     <option value="income">🟢 Income</option>
                                     <option value="expense">🔴 Expense</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="text-[11px] font-semibold text-gray-500">Category</label>
-                                <select id="tx-category" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                                <select id="tx-category" onchange="handleCategoryChange()" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
                                     <option value="Salary">Salary / Income</option>
                                     <option value="Food">Food & Dining</option>
                                     <option value="Shopping">Shopping & Grocery</option>
-                                    <option value="Bills">Bills & Utilities</option>
-                                    <option value="EMI">EMI & Loans</option>
+                                    <option value="Bills">Bills & Utilities (Card Bill)</option>
+                                    <option value="EMI">EMI & Bank Loans</option>
+                                    <option value="Udhar">Udhar Repayment (Dena baki)</option>
                                     <option value="Travel">Travel & Fuel</option>
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
                         </div>
+
+                        <!-- Dynamic Link Selector (Shows when EMI, Card, or Udhar is selected) -->
+                        <div id="linked-account-box" class="hidden">
+                            <label class="text-[11px] font-bold text-indigo-600">Select Specific Loan / Card / Udhar to Credit</label>
+                            <select id="tx-linked-id" class="w-full mt-1 p-2.5 bg-indigo-50 border border-indigo-200 rounded-xl text-xs font-semibold text-indigo-900">
+                                <!-- Dynamically filled -->
+                            </select>
+                        </div>
+
                         <div>
                             <label class="text-[11px] font-semibold text-gray-500">Title</label>
                             <input type="text" id="tx-title" placeholder="e.g., Grocery, Car Loan EMI" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
@@ -241,6 +251,39 @@
                 <span>Reports</span>
             </button>
         </nav>
+    </div>
+
+    <!-- MODAL: PAY EMI SOURCE SELECTOR -->
+    <div id="emi-pay-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-800">Pay Loan EMI</h3>
+                <button onclick="toggleEmiPayModal(false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-gray-500" id="emi-modal-loan-title">Paying EMI for Loan</p>
+            <form onsubmit="confirmEmiPayment(event)" class="space-y-3">
+                <input type="hidden" id="emi-target-loan-id">
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">EMI Amount (₹)</label>
+                    <input type="number" id="emi-pay-amount" required class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-indigo-700">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-500">Deduct Payment From</label>
+                    <select id="emi-payment-source" class="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium">
+                        <option value="salary">💵 Salary / Cash / Bank Balance</option>
+                        <option value="card">💳 Credit Card (Increase Card Used Balance)</option>
+                        <option value="udhar">🤝 Taken Udhar from Relative / Friend</option>
+                    </select>
+                </div>
+                <div id="source-detail-box" class="hidden">
+                    <label class="text-[11px] font-bold text-purple-600" id="source-detail-label">Select Specific Account</label>
+                    <select id="emi-source-id" class="w-full mt-1 p-2.5 bg-purple-50 border border-purple-200 rounded-xl text-xs font-semibold text-purple-900">
+                        <!-- Dynamic Options -->
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-xl text-xs shadow">Confirm EMI Payment</button>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL: ADD BANK LOAN -->
@@ -424,7 +467,8 @@
                         { id: 101, name: 'HDFC Card', limit: 100000, used: 12000, stmtDay: 15, dueDay: 5 }
                     ],
                     udhar: [
-                        { id: 201, type: 'given', person: 'Vikas', amount: 2000, note: 'Trip', status: 'pending' }
+                        { id: 201, type: 'given', person: 'Vikas', amount: 2000, note: 'Trip', status: 'pending' },
+                        { id: 202, type: 'taken', person: 'Ramesh Uncle', amount: 5000, note: 'Urgent Help', status: 'pending' }
                     ]
                 }));
             }
@@ -489,12 +533,69 @@
             renderUdhar();
         }
 
+        // DYNAMIC EXPENSE CATEGORY AUTO-LINKING
+        function handleCategoryChange() {
+            const type = document.getElementById('tx-type').value;
+            const category = document.getElementById('tx-category').value;
+            const box = document.getElementById('linked-account-box');
+            const select = document.getElementById('tx-linked-id');
+
+            select.innerHTML = '';
+
+            if (type === 'expense') {
+                if (category === 'EMI' && userData.loans.length) {
+                    box.classList.remove('hidden');
+                    userData.loans.forEach(l => {
+                        select.innerHTML += `<option value="loan_${l.id}">🏦 Loan: ${l.name} (Rem: ₹${l.remaining})</option>`;
+                    });
+                    return;
+                } else if (category === 'Bills' && userData.cards.length) {
+                    box.classList.remove('hidden');
+                    userData.cards.forEach(c => {
+                        select.innerHTML += `<option value="card_${c.id}">💳 Card Bill: ${c.name} (Used: ₹${c.used})</option>`;
+                    });
+                    return;
+                } else if (category === 'Udhar') {
+                    const pendingTaken = userData.udhar.filter(u => u.type === 'taken' && u.status !== 'settled');
+                    if (pendingTaken.length) {
+                        box.classList.remove('hidden');
+                        pendingTaken.forEach(u => {
+                            select.innerHTML += `<option value="udhar_${u.id}">🤝 Udhar: ${u.person} (Dena: ₹${u.amount})</option>`;
+                        });
+                        return;
+                    }
+                }
+            }
+            box.classList.add('hidden');
+        }
+
         function addTransaction(e) {
             e.preventDefault();
             const type = document.getElementById('tx-type').value;
             const category = document.getElementById('tx-category').value;
             const title = document.getElementById('tx-title').value.trim();
             const amount = parseFloat(document.getElementById('tx-amount').value);
+            const linkedVal = document.getElementById('tx-linked-id').value;
+
+            // Auto-credit linked account if selected
+            if (type === 'expense' && linkedVal && !document.getElementById('linked-account-box').classList.contains('hidden')) {
+                const [targetType, idStr] = linkedVal.split('_');
+                const targetId = parseInt(idStr);
+
+                if (targetType === 'loan') {
+                    let loan = userData.loans.find(l => l.id === targetId);
+                    if (loan) loan.remaining = Math.max(0, loan.remaining - amount);
+                } else if (targetType === 'card') {
+                    let card = userData.cards.find(c => c.id === targetId);
+                    if (card) card.used = Math.max(0, card.used - amount);
+                } else if (targetType === 'udhar') {
+                    let u = userData.udhar.find(x => x.id === targetId);
+                    if (u) {
+                        if (amount >= u.amount) u.status = 'settled';
+                        else u.amount -= amount;
+                    }
+                }
+            }
 
             userData.transactions.unshift({
                 id: Date.now(),
@@ -506,6 +607,7 @@
             });
             saveUserData();
             e.target.reset();
+            document.getElementById('linked-account-box').classList.add('hidden');
         }
 
         function deleteTransaction(id) {
@@ -551,8 +653,103 @@
             document.getElementById('dash-liabilities').innerText = '₹' + totalLiabilities.toLocaleString('en-IN');
         }
 
-        // BANK LOANS LOGIC
+        // BANK LOANS LOGIC & EMI PAYMENT MODAL
         function toggleLoanModal(show) { document.getElementById('loan-modal').classList.toggle('hidden', !show); }
+        function toggleEmiPayModal(show) { document.getElementById('emi-pay-modal').classList.toggle('hidden', !show); }
+
+        function openEmiPayModal(loanId) {
+            let loan = userData.loans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            document.getElementById('emi-target-loan-id').value = loan.id;
+            document.getElementById('emi-modal-loan-title').innerText = 'Paying EMI for: ' + loan.name;
+            document.getElementById('emi-pay-amount').value = Math.min(loan.emi, loan.remaining);
+
+            const sourceSelect = document.getElementById('emi-payment-source');
+            sourceSelect.onchange = function() {
+                const val = sourceSelect.value;
+                const detailBox = document.getElementById('source-detail-box');
+                const detailSelect = document.getElementById('emi-source-id');
+                detailSelect.innerHTML = '';
+
+                if (val === 'card' && userData.cards.length) {
+                    detailBox.classList.remove('hidden');
+                    userData.cards.forEach(c => {
+                        detailSelect.innerHTML += `<option value="${c.id}">${c.name} (Avail Limit: ₹${c.limit - c.used})</option>`;
+                    });
+                } else if (val === 'udhar') {
+                    detailBox.classList.remove('hidden');
+                    detailSelect.innerHTML = `<option value="new_relative">🤝 Add New Person / Friend Udhar</option>`;
+                    userData.udhar.filter(u => u.type === 'taken').forEach(u => {
+                        detailSelect.innerHTML += `<option value="${u.id}">${u.person}</option>`;
+                    });
+                } else {
+                    detailBox.classList.add('hidden');
+                }
+            };
+
+            sourceSelect.onchange();
+            toggleEmiPayModal(true);
+        }
+
+        function confirmEmiPayment(e) {
+            e.preventDefault();
+            const loanId = parseInt(document.getElementById('emi-target-loan-id').value);
+            const amount = parseFloat(document.getElementById('emi-pay-amount').value);
+            const source = document.getElementById('emi-payment-source').value;
+            const sourceId = document.getElementById('emi-source-id').value;
+
+            let loan = userData.loans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            // Reduce loan remaining balance
+            loan.remaining = Math.max(0, loan.remaining - amount);
+
+            // Deduct or adjust from selected source
+            if (source === 'salary') {
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'expense',
+                    category: 'EMI',
+                    title: loan.name + ' EMI (Cash/Salary)',
+                    amount,
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+            } else if (source === 'card') {
+                let card = userData.cards.find(c => c.id === parseInt(sourceId));
+                if (card) card.used += amount;
+
+                userData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'expense',
+                    category: 'EMI',
+                    title: loan.name + ' EMI via Card (' + (card ? card.name : '') + ')',
+                    amount,
+                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+                });
+            } else if (source === 'udhar') {
+                if (sourceId === 'new_relative') {
+                    let personName = prompt("Enter Person / Relative Name who paid this EMI:");
+                    if (personName) {
+                        userData.udhar.push({
+                            id: Date.now(),
+                            type: 'taken',
+                            person: personName,
+                            amount,
+                            note: 'EMI for ' + loan.name,
+                            status: 'pending'
+                        });
+                    }
+                } else {
+                    let u = userData.udhar.find(x => x.id === parseInt(sourceId));
+                    if (u) u.amount += amount;
+                }
+            }
+
+            saveUserData();
+            toggleEmiPayModal(false);
+        }
+
         function saveLoan(e) {
             e.preventDefault();
             userData.loans.push({
@@ -566,24 +763,7 @@
             toggleLoanModal(false);
             e.target.reset();
         }
-        function payEMI(loanId) {
-            let loan = userData.loans.find(l => l.id === loanId);
-            if (loan && loan.remaining > 0) {
-                let payAmount = Math.min(loan.emi, loan.remaining);
-                loan.remaining -= payAmount;
-                
-                userData.transactions.unshift({
-                    id: Date.now(),
-                    type: 'expense',
-                    category: 'EMI',
-                    title: loan.name + ' EMI Paid',
-                    amount: payAmount,
-                    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-                });
 
-                saveUserData();
-            }
-        }
         function deleteLoan(id) { userData.loans = userData.loans.filter(l => l.id !== id); saveUserData(); }
 
         function renderLoans() {
@@ -617,7 +797,7 @@
                             <p class="font-bold text-gray-800">₹${l.emi.toLocaleString('en-IN')}</p>
                         </div>
                     </div>
-                    ${l.remaining > 0 ? `<button onclick="payEMI(${l.id})" class="w-full py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold rounded-xl text-xs border border-purple-200 mt-1">Pay Monthly EMI</button>` : '<p class="text-[10px] text-emerald-600 font-bold text-center">Loan Completed 🎉</p>'}
+                    ${l.remaining > 0 ? `<button onclick="openEmiPayModal(${l.id})" class="w-full py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold rounded-xl text-xs border border-purple-200 mt-1">Pay Monthly EMI</button>` : '<p class="text-[10px] text-emerald-600 font-bold text-center">Loan Completed 🎉</p>'}
                 `;
                 container.appendChild(el);
             });
